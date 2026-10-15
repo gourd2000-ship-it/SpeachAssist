@@ -123,4 +123,33 @@ describe('App', () => {
     expect(Audio).toHaveBeenCalledWith('/content/sample/audio/words/hello.wav')
     expect(audio.play).toHaveBeenCalledTimes(1)
   })
+
+  it('announces an audio playback failure without hiding the passage', async () => {
+    const audio = {
+      currentTime: 0,
+      pause: vi.fn(),
+      play: vi.fn().mockRejectedValue(new Error('blocked')),
+      addEventListener: vi.fn(),
+    }
+    vi.stubGlobal(
+      'Audio',
+      vi.fn(function MockAudio() {
+        return audio
+      }),
+    )
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: string) => {
+        const body = input.endsWith('index.json')
+          ? { passages: [{ id: 'sample', title: 'sample' }] }
+          : passage
+        return new Response(JSON.stringify(body), { status: 200 })
+      }),
+    )
+    render(<App />)
+
+    fireEvent.click(await screen.findByRole('button', { name: '문장 1 읽기' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('음성을 재생할 수 없습니다.')
+    expect(screen.getByRole('button', { name: 'Hello 단어 읽기' })).toBeInTheDocument()
+  })
 })

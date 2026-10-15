@@ -1,8 +1,8 @@
 import 'dotenv/config'
 
 import { GoogleGenAI } from '@google/genai'
-import { access, mkdir, readFile, writeFile } from 'node:fs/promises'
-import { dirname, resolve } from 'node:path'
+import { access, mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
+import { basename, dirname, extname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import {
@@ -10,11 +10,11 @@ import {
   type PreparedPassage,
   type SentenceEnrichment,
 } from '../src/content/prepare.js'
+import { passageIdFromFilename } from '../src/content/passageId.js'
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const sourcePath = resolve(projectRoot, 'doc/sample.txt')
-const contentRoot = resolve(projectRoot, 'public/content/sample')
-const passagePath = resolve(contentRoot, 'passage.json')
+const sourceDirectory = resolve(projectRoot, 'doc')
+const publicContentRoot = resolve(projectRoot, 'public/content')
 const indexPath = resolve(projectRoot, 'public/content/index.json')
 const force = process.argv.includes('--force')
 
@@ -56,7 +56,7 @@ async function pathExists(path: string): Promise<boolean> {
   }
 }
 
-async function readCachedPassage(): Promise<Map<string, CachedSentence>> {
+async function readCachedPassage(passagePath: string): Promise<Map<string, CachedSentence>> {
   if (!(await pathExists(passagePath))) return new Map()
 
   const cached = JSON.parse(await readFile(passagePath, 'utf8')) as PreparedPassage
@@ -73,104 +73,135 @@ async function main() {
   }
 
   const client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
-  const [source, cached] = await Promise.all([readFile(sourcePath, 'utf8'), readCachedPassage()])
+  const sourceFiles = (await readdir(sourceDirectory))
+    .filter((filename) => extname(filename).toLocaleLowerCase('en-US') === '.txt')
+    .sort((first, second) => first.localeCompare(second, 'ko'))
+
+  if (!sourceFiles.length) {
+    throw new Error('doc 폴더에 준비할 .txt 지문이 없습니다.')
+  }
+
   let enrichedCount = 0
+  const passages: PreparedPassage[] = []
 
-  const passage = await preparePassage({
-    id: 'sample',
-    title: 'sample',
-    source,
-    enrichSentence: async ({ english }) => {
-      const prior = cached.get(english)
-      if (!force && prior?.translation && prior.pronunciation) {
-        return prior
-      }
+  for (const filename of sourceFiles) {
+    const id = passageIdFromFilename(filename)
+    const title = basename(filename, extname(filename))
+    const sourcePath = resolve(sourceDirectory, filename)
+    const contentRoot = resolve(publicContentRoot, id)
+    const passagePath = resolve(contentRoot, 'passage.json')
+    const [source, cached] = await Promise.all([readFile(sourcePath, 'utf8'), readCachedPassage(passagePath)])
 
-      enrichedCount += 1
-      console.log(`[text ${enrichedCount}] ${english}`)
-      const response = await client.interactions.create({
-        model: textModel,
-        system_instruction: [
-          'You prepare Korean study data for English learners.',
-          'Return only a JSON object with exactly translation and pronunciation string fields.',
-          'translation must be a natural Korean translation.',
-          'pronunciation must be Korean Hangul that represents how the English sentence sounds, not a translation.',
-          'Do not include Markdown, explanations, or English words in pronunciation.',
-        ].join(' '),
-        input: `English sentence: ${JSON.stringify(english)}`,
-      })
+    const passage = await preparePassage({
+      id,
+      title,
+      source,
+      enrichSentence: async ({ english }) => {
+        const prior = cached.get(english)
+        if (!force && prior?.translation && prior.pronunciation) {
+          return prior
+        }
 
-      if (!response.output_text) {
-        throw new Error(`보강 텍스트를 받지 못했습니다: ${english}`)
-      }
+        enrichedCount += 1
+        console.log(`[text ${enrichedCount}] ${english}`)
+        const response = await client.interactions.create({
+          model: textModel,
+          system_instruction: [
+            'You prepare Korean study data for English learners.',
+            'Return only a JSON object with exactly translation and pronunciation string fields.',
+            'translation must be a natural Korean translation.',
+            'pronunciation must be Korean Hangul that represents how the English sentence sounds, not a translation.',
+            'Do not include Markdown, explanations, or English words in pronunciation.',
+          ].join(' '),
+          input: `English sentence: ${JSON.stringify(english)}`,
+        })
 
-      return extractJson(response.output_text)
-    },
-  })
+        if (!response.output_text) {
+          throw new Error(`보강 텍스트를 받지 못했습니다: ${english}`)
+        }
 
-  await mkdir(contentRoot, { recursive: true })
-  await writeFile(passagePath, `${JSON.stringify(passage, null, 2)}\n`, 'utf8')
+        return extractJson(response.output_text)
+      },
+    })
+
+    await mkdir(contentRoot, { recursive: true })
+    await writeFile(passagePath, `${JSON.stringify(passage, null, 2)}\n`, 'utf8')
+    passages.push(passage)
+  }
+
   await writeFile(
     indexPath,
-    `${JSON.stringify({ passages: [{ id: passage.id, title: passage.title }] }, null, 2)}\n`,
+    `${JSON.stringify(
+      { passages: passages.map(({ id, title }) => ({ id, title })) },
+      null,
+      2,
+    )}\n`,
     'utf8',
   )
 
-  const audioJobs = [
+  const audioJobs = passages.flatMap((passage) => [
     ...passage.sentences.map((sentence) => ({
-      label: `sentence ${sentence.id}`,
+      label: `${passage.title} sentence ${sentence.id}`,
       text: sentence.english,
       audioSrc: sentence.audioSrc,
     })),
     ...passage.words.map((word) => ({
-      label: `word ${word.key}`,
+      label: `${passage.title} word ${word.key}`,
       text: word.key,
       audioSrc: word.audioSrc,
     })),
-  ]
+  ])
+
+  const pendingJobs = [] as typeof audioJobs
+  for (const job of audioJobs) {
+    if (force || !(await pathExists(audioFilePath(job.audioSrc)))) pendingJobs.push(job)
+  }
 
   let createdAudioCount = 0
-  for (const job of audioJobs) {
-    const outputPath = audioFilePath(job.audioSrc)
-    if (!force && (await pathExists(outputPath))) continue
+  let nextJobIndex = 0
+  async function createAudioWorker() {
+    while (nextJobIndex < pendingJobs.length) {
+      const job = pendingJobs[nextJobIndex]
+      nextJobIndex += 1
+      const outputPath = audioFilePath(job.audioSrc)
 
-    await mkdir(dirname(outputPath), { recursive: true })
-    createdAudioCount += 1
-    console.log(`[audio ${createdAudioCount}/${audioJobs.length}] ${job.label}`)
-    const response = await client.interactions.create({
-      model: speechModel,
-      input: [
-        {
-          type: 'user_input',
-          content: [
-            {
-              type: 'text',
-              text: job.text,
-              annotations: [
-                {
-                  type: 'speech_metadata',
-                  speaker: 'reader',
-                  style: 'Read naturally and clearly for an English learner.',
-                },
-              ],
-            },
-          ],
+      await mkdir(dirname(outputPath), { recursive: true })
+      createdAudioCount += 1
+      console.log(`[audio ${createdAudioCount}/${pendingJobs.length}] ${job.label}`)
+      const response = await client.interactions.create({
+        model: speechModel,
+        input: [
+          {
+            type: 'user_input',
+            content: [
+              {
+                type: 'text',
+                text: job.text,
+                annotations: [
+                  {
+                    type: 'speech_metadata',
+                    style: 'Read naturally and clearly for an English learner.',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        response_format: { type: 'audio' },
+        generation_config: {
+          speech_config: [{ voice }],
         },
-      ],
-      response_format: { type: 'audio' },
-      generation_config: {
-        speech_config: {
-          speakers: [{ speaker: 'reader', voice, language: 'en-US' }],
-        },
-      },
-    })
+      })
 
-    if (!response.output_audio?.data) {
-      throw new Error(`음성 데이터를 받지 못했습니다: ${job.label}`)
+      if (!response.output_audio?.data) {
+        throw new Error(`음성 데이터를 받지 못했습니다: ${job.label}`)
+      }
+
+      await writeFile(outputPath, Buffer.from(response.output_audio.data, 'base64'))
     }
-
-    await writeFile(outputPath, Buffer.from(response.output_audio.data, 'base64'))
   }
+
+  await Promise.all([createAudioWorker(), createAudioWorker()])
 
   console.log(`완료: 텍스트 보강 ${enrichedCount}개, 새 음성 ${createdAudioCount}개`)
 }

@@ -15,7 +15,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState('')
   const [displayMode, setDisplayMode] = useState<'none' | 'translation' | 'pronunciation'>('none')
   const [error, setError] = useState<string | null>(null)
-  const { activeKey, hasLastTarget, play, replay, stop } = useAudioPlayer()
+  const { activeKey, error: audioError, hasLastTarget, play, replay, stop } = useAudioPlayer()
 
   useEffect(() => {
     let active = true
@@ -105,6 +105,7 @@ export default function App() {
       </section>
 
       {error ? <p role="alert">{error}</p> : null}
+      {audioError ? <p role="alert">{audioError}</p> : null}
       {!error && !passage ? <p role="status">지문을 불러오는 중입니다.</p> : null}
 
       {passage ? (

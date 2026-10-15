@@ -10,6 +10,7 @@ export function useAudioPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [activeKey, setActiveKey] = useState<string | null>(null)
   const [lastTarget, setLastTarget] = useState<AudioTarget | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const stop = useCallback(() => {
     const audio = audioRef.current
@@ -24,6 +25,7 @@ export function useAudioPlayer() {
   const play = useCallback(
     (target: AudioTarget) => {
       stop()
+      setError(null)
       const audio = new Audio(target.audioSrc)
       audioRef.current = audio
       setLastTarget(target)
@@ -38,6 +40,7 @@ export function useAudioPlayer() {
         if (audioRef.current === audio) {
           audioRef.current = null
           setActiveKey(null)
+          setError('음성을 재생할 수 없습니다. 다시 시도해 주세요.')
         }
       })
     },
@@ -50,5 +53,5 @@ export function useAudioPlayer() {
 
   useEffect(() => stop, [stop])
 
-  return { activeKey, hasLastTarget: lastTarget !== null, play, replay, stop }
+  return { activeKey, error, hasLastTarget: lastTarget !== null, play, replay, stop }
 }
