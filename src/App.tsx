@@ -11,6 +11,7 @@ export default function App() {
   const [passages, setPassages] = useState<PassageSummary[]>([])
   const [passage, setPassage] = useState<PreparedPassage | null>(null)
   const [selectedId, setSelectedId] = useState('')
+  const [displayMode, setDisplayMode] = useState<'none' | 'translation' | 'pronunciation'>('none')
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -71,6 +72,23 @@ export default function App() {
             </option>
           ))}
         </select>
+
+        <div className="toggle-group" aria-label="한국어 표시">
+          <button
+            type="button"
+            aria-pressed={displayMode === 'translation'}
+            onClick={() => setDisplayMode((mode) => (mode === 'translation' ? 'none' : 'translation'))}
+          >
+            번역 보기
+          </button>
+          <button
+            type="button"
+            aria-pressed={displayMode === 'pronunciation'}
+            onClick={() => setDisplayMode((mode) => (mode === 'pronunciation' ? 'none' : 'pronunciation'))}
+          >
+            발음 보기
+          </button>
+        </div>
       </section>
 
       {error ? <p role="alert">{error}</p> : null}
@@ -81,9 +99,15 @@ export default function App() {
           <h2>{passage.title}</h2>
           <div className="sentence-list">
             {passage.sentences.map((sentence) => (
-              <p key={sentence.id} className="sentence-row">
-                {sentence.english}
-              </p>
+              <section key={sentence.id} className="sentence-row">
+                <p className="english-text">{sentence.english}</p>
+                {displayMode === 'translation' ? (
+                  <p className="korean-text">{sentence.translation}</p>
+                ) : null}
+                {displayMode === 'pronunciation' ? (
+                  <p className="korean-text">{sentence.pronunciation}</p>
+                ) : null}
+              </section>
             ))}
           </div>
         </article>

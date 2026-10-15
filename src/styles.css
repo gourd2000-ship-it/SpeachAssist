@@ -20,8 +20,13 @@ h1 { margin-bottom: .65rem; font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing:
 .control-panel { display: grid; gap: .45rem; padding: 1rem; border: 1px solid #d9d2c4; border-radius: 1rem; background: #fffdfa; }
 .control-panel label { font-size: .9rem; font-weight: 700; }
 .control-panel select { width: 100%; padding: .7rem; border: 1px solid #9a927f; border-radius: .5rem; background: #fff; }
+.toggle-group { display: flex; flex-wrap: wrap; gap: .5rem; }
+.toggle-group button { padding: .55rem .75rem; border: 1px solid #9a927f; border-radius: 999px; background: #fff; cursor: pointer; }
+.toggle-group button[aria-pressed="true"] { border-color: #8b4c25; background: #8b4c25; color: #fff; }
 .passage { margin-top: 1.25rem; padding: clamp(1.25rem, 5vw, 2.5rem); border: 1px solid #d9d2c4; border-radius: 1rem; background: #fff; }
 .sentence-list { display: grid; gap: 1rem; }
-.sentence-row { margin: 0; font-size: 1.2rem; line-height: 1.7; }
+.sentence-row { font-size: 1.2rem; line-height: 1.7; }
+.english-text, .korean-text { margin: 0; }
+.korean-text { margin-top: .25rem; color: #6e6250; font-size: .98rem; }
 
 @media (max-width: 520px) { .app-shell { width: min(100% - 1.25rem, 860px); padding-top: 1.5rem; } }
