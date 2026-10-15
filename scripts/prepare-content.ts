@@ -15,6 +15,7 @@ const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const sourcePath = resolve(projectRoot, 'doc/sample.txt')
 const contentRoot = resolve(projectRoot, 'public/content/sample')
 const passagePath = resolve(contentRoot, 'passage.json')
+const indexPath = resolve(projectRoot, 'public/content/index.json')
 const force = process.argv.includes('--force')
 
 const textModel = 'gemini-3.8-flash'
@@ -109,6 +110,11 @@ async function main() {
 
   await mkdir(contentRoot, { recursive: true })
   await writeFile(passagePath, `${JSON.stringify(passage, null, 2)}\n`, 'utf8')
+  await writeFile(
+    indexPath,
+    `${JSON.stringify({ passages: [{ id: passage.id, title: passage.title }] }, null, 2)}\n`,
+    'utf8',
+  )
 
   const audioJobs = [
     ...passage.sentences.map((sentence) => ({

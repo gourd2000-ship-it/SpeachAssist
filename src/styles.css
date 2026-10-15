@@ -1,0 +1,27 @@
+:root {
+  color: #1b263b;
+  background: #f7f5f0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; min-width: 320px; }
+
+button, select { font: inherit; }
+
+.app-shell { width: min(100% - 2rem, 860px); margin: 0 auto; padding: 3rem 0 5rem; }
+.app-header { margin-bottom: 2rem; }
+.eyebrow { margin: 0 0 .5rem; color: #8b4c25; font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+h1, h2, p { margin-top: 0; }
+h1 { margin-bottom: .65rem; font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: -.045em; }
+.app-header > p:last-child { color: #526174; }
+.control-panel { display: grid; gap: .45rem; padding: 1rem; border: 1px solid #d9d2c4; border-radius: 1rem; background: #fffdfa; }
+.control-panel label { font-size: .9rem; font-weight: 700; }
+.control-panel select { width: 100%; padding: .7rem; border: 1px solid #9a927f; border-radius: .5rem; background: #fff; }
+.passage { margin-top: 1.25rem; padding: clamp(1.25rem, 5vw, 2.5rem); border: 1px solid #d9d2c4; border-radius: 1rem; background: #fff; }
+.sentence-list { display: grid; gap: 1rem; }
+.sentence-row { margin: 0; font-size: 1.2rem; line-height: 1.7; }
+
+@media (max-width: 520px) { .app-shell { width: min(100% - 1.25rem, 860px); padding-top: 1.5rem; } }
