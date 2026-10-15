@@ -62,6 +62,44 @@ describe('App', () => {
     expect(screen.getByText('헬로, 프렌드!')).toBeInTheDocument()
   })
 
+  it('resets Korean display to English-only when the passage changes', async () => {
+    const otherPassage = {
+      ...passage,
+      id: 'other',
+      title: 'other',
+      sentences: [{ ...passage.sentences[0], english: 'Next sentence.', translation: '다음 문장입니다.' }],
+      words: [{ key: 'next', audioSrc: '/content/other/audio/words/next.wav' }],
+    }
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: string) => {
+        if (input.endsWith('index.json')) {
+          return new Response(
+            JSON.stringify({
+              passages: [
+                { id: 'sample', title: 'sample' },
+                { id: 'other', title: 'other' },
+              ],
+            }),
+            { status: 200 },
+          )
+        }
+        return new Response(JSON.stringify(input.includes('/other/') ? otherPassage : passage), {
+          status: 200,
+        })
+      }),
+    )
+    render(<App />)
+
+    await screen.findByRole('button', { name: '번역 보기' })
+    fireEvent.click(screen.getByRole('button', { name: '번역 보기' }))
+    expect(screen.getByText('안녕하세요.')).toBeInTheDocument()
+
+    fireEvent.change(screen.getByLabelText('지문 선택'), { target: { value: 'other' } })
+    await screen.findByRole('button', { name: 'Next 단어 읽기' })
+    expect(screen.queryByText('다음 문장입니다.')).not.toBeInTheDocument()
+  })
+
   it('plays, stops, and replays a selected sentence audio file', async () => {
     const audio = {
       currentTime: 0,

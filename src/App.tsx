@@ -43,6 +43,7 @@ export default function App() {
 
   async function selectPassage(id: string) {
     stop()
+    setDisplayMode('none')
     setSelectedId(id)
     setError(null)
     setPassage(null)
