@@ -33,7 +33,7 @@ describe('App', () => {
     render(<App />)
 
     expect(await screen.findByRole('heading', { name: '영어 읽기 도우미' })).toBeInTheDocument()
-    expect(await screen.findByText('Hello, friend!')).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: 'Hello 단어 읽기' })).toBeInTheDocument()
     expect(screen.getByLabelText('지문 선택')).toHaveValue('sample')
     expect(fetch).toHaveBeenCalledWith('/content/index.json')
     expect(fetch).toHaveBeenCalledWith('/content/sample/passage.json')
@@ -49,7 +49,7 @@ describe('App', () => {
     vi.stubGlobal('fetch', fetch)
     render(<App />)
 
-    await screen.findByText('Hello, friend!')
+    await screen.findByRole('button', { name: 'Hello 단어 읽기' })
     expect(screen.queryByText('안녕하세요.')).not.toBeInTheDocument()
     expect(screen.queryByText('헬로, 프렌드!')).not.toBeInTheDocument()
 
@@ -95,5 +95,32 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: '다시 읽기' }))
     expect(Audio).toHaveBeenCalledTimes(2)
     expect(audio.play).toHaveBeenCalledTimes(2)
+  })
+
+  it('plays only the chosen word audio file', async () => {
+    const audio = {
+      currentTime: 0,
+      pause: vi.fn(),
+      play: vi.fn().mockResolvedValue(undefined),
+      addEventListener: vi.fn(),
+    }
+    const Audio = vi.fn(function MockAudio() {
+      return audio
+    })
+    vi.stubGlobal('Audio', Audio)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: string) => {
+        const body = input.endsWith('index.json')
+          ? { passages: [{ id: 'sample', title: 'sample' }] }
+          : passage
+        return new Response(JSON.stringify(body), { status: 200 })
+      }),
+    )
+    render(<App />)
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Hello 단어 읽기' }))
+    expect(Audio).toHaveBeenCalledWith('/content/sample/audio/words/hello.wav')
+    expect(audio.play).toHaveBeenCalledTimes(1)
   })
 })

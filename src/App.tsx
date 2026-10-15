@@ -7,6 +7,7 @@ import {
   loadPassageIndex,
   type PassageSummary,
 } from './content/repository'
+import { segmentEnglish } from './content/wordSegments'
 
 export default function App() {
   const [passages, setPassages] = useState<PassageSummary[]>([])
@@ -127,7 +128,31 @@ export default function App() {
                   >
                     ▶
                   </button>
-                  <p className="english-text">{sentence.english}</p>
+                  <p className="english-text">
+                    {segmentEnglish(sentence.english).map((segment, index) => {
+                      if (segment.type === 'text') return <span key={index}>{segment.value}</span>
+                      const word = passage.words.find((item) => item.key === segment.key)
+                      if (!word) return <span key={index}>{segment.display}</span>
+
+                      return (
+                        <button
+                          key={index}
+                          type="button"
+                          className="word-button"
+                          aria-label={`${segment.display} 단어 읽기`}
+                          onClick={() =>
+                            play({
+                              key: `word-${segment.key}`,
+                              label: `${segment.display} 단어`,
+                              audioSrc: word.audioSrc,
+                            })
+                          }
+                        >
+                          {segment.display}
+                        </button>
+                      )
+                    })}
+                  </p>
                 </div>
                 {displayMode === 'translation' ? (
                   <p className="korean-text">{sentence.translation}</p>

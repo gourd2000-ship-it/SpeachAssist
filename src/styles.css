@@ -30,6 +30,8 @@ h1 { margin-bottom: .65rem; font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing:
 .sentence-heading { display: flex; align-items: flex-start; gap: .65rem; }
 .sentence-play { flex: 0 0 auto; width: 2rem; height: 2rem; margin-top: .15rem; border: 0; border-radius: 50%; background: #1b263b; color: #fff; cursor: pointer; }
 .english-text, .korean-text { margin: 0; }
+.word-button { display: inline; padding: 0; border: 0; border-bottom: 1px dashed #8b4c25; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.word-button:hover, .word-button:focus-visible { color: #8b4c25; outline-offset: 3px; }
 .korean-text { margin-top: .25rem; color: #6e6250; font-size: .98rem; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
