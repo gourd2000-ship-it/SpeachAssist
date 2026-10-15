@@ -36,12 +36,7 @@ describe('preparePassage', () => {
         audioSrc: '/content/sample/audio/sentences/002.wav',
       },
     ])
-    expect(passage.words).toEqual([
-      { key: 'hello', audioSrc: '/content/sample/audio/words/hello.wav' },
-      { key: 'friend', audioSrc: '/content/sample/audio/words/friend.wav' },
-      { key: "i'm", audioSrc: "/content/sample/audio/words/i'm.wav" },
-      { key: 'here', audioSrc: '/content/sample/audio/words/here.wav' },
-    ])
+    expect(passage).not.toHaveProperty('words')
   })
 
   it('rejects an empty generated translation or pronunciation', async () => {

@@ -155,11 +155,6 @@ async function main() {
       text: sentence.english,
       audioSrc: sentence.audioSrc,
     })),
-    ...passage.words.map((word) => ({
-      label: `${passage.title} word ${word.key}`,
-      text: word.key,
-      audioSrc: word.audioSrc,
-    })),
   ])
 
   const pendingJobs = [] as typeof audioJobs

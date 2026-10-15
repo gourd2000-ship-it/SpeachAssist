@@ -15,8 +15,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState('')
   const [displayMode, setDisplayMode] = useState<'none' | 'translation' | 'pronunciation'>('none')
   const [error, setError] = useState<string | null>(null)
-  const { activeKey, error: audioError, hasLastTarget, play, replay, stop } = useAudioPlayer()
-  const wordByKey = passage ? new Map(passage.words.map((word) => [word.key, word])) : null
+  const { activeKey, error: audioError, hasLastTarget, playAudio, replay, speak, stop } = useAudioPlayer()
 
   useEffect(() => {
     let active = true
@@ -140,7 +139,7 @@ export default function App() {
                     className="sentence-play"
                     aria-label={`문장 ${sentence.id} 읽기`}
                     onClick={() =>
-                      play({
+                      playAudio({
                         key: `sentence-${sentence.id}`,
                         label: `문장 ${sentence.id}`,
                         audioSrc: sentence.audioSrc,
@@ -153,9 +152,6 @@ export default function App() {
                   <p className="english-text">
                     {segmentEnglish(sentence.english).map((segment, index) => {
                       if (segment.type === 'text') return <span key={index}>{segment.value}</span>
-                      const word = wordByKey?.get(segment.key)
-                      if (!word) return <span key={index}>{segment.display}</span>
-
                       return (
                         <button
                           key={index}
@@ -163,10 +159,10 @@ export default function App() {
                           className={`word-button${activeKey === `word-${segment.key}` ? ' is-playing' : ''}`}
                           aria-label={`${segment.display} 단어 읽기`}
                           onClick={() =>
-                            play({
+                            speak({
                               key: `word-${segment.key}`,
                               label: `${segment.display} 단어`,
-                              audioSrc: word.audioSrc,
+                              text: segment.display,
                             })
                           }
                         >

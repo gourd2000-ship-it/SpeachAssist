@@ -15,7 +15,6 @@ const passage = {
       audioSrc: '/content/sample/audio/sentences/001.wav',
     },
   ],
-  words: [{ key: 'hello', audioSrc: '/content/sample/audio/words/hello.wav' }],
 }
 
 afterEach(() => vi.unstubAllGlobals())
@@ -135,17 +134,20 @@ describe('App', () => {
     expect(audio.play).toHaveBeenCalledTimes(2)
   })
 
-  it('plays only the chosen word audio file', async () => {
-    const audio = {
-      currentTime: 0,
-      pause: vi.fn(),
-      play: vi.fn().mockResolvedValue(undefined),
-      addEventListener: vi.fn(),
-    }
-    const Audio = vi.fn(function MockAudio() {
-      return audio
+  it('plays a chosen word with the browser built-in English voice', async () => {
+    vi.stubGlobal(
+      'Audio',
+      vi.fn(function MockAudio() {
+        return { addEventListener: vi.fn(), currentTime: 0, pause: vi.fn(), play: vi.fn().mockResolvedValue(undefined) }
+      }),
+    )
+    const speechSynthesis = { cancel: vi.fn(), speak: vi.fn() }
+    const SpeechSynthesisUtterance = vi.fn(function MockSpeechSynthesisUtterance(this: { text: string; lang: string }, text: string) {
+      this.text = text
+      this.lang = ''
     })
-    vi.stubGlobal('Audio', Audio)
+    vi.stubGlobal('speechSynthesis', speechSynthesis)
+    vi.stubGlobal('SpeechSynthesisUtterance', SpeechSynthesisUtterance)
     vi.stubGlobal(
       'fetch',
       vi.fn(async (input: string) => {
@@ -158,7 +160,49 @@ describe('App', () => {
     render(<App />)
 
     fireEvent.click(await screen.findByRole('button', { name: 'Hello 단어 읽기' }))
-    expect(Audio).toHaveBeenCalledWith('/content/sample/audio/words/hello.wav')
+    expect(SpeechSynthesisUtterance).toHaveBeenCalledWith('Hello')
+    expect(speechSynthesis.speak).toHaveBeenCalledWith(
+      expect.objectContaining({ text: 'Hello', lang: 'en-US' }),
+    )
+  })
+
+  it('cancels a word voice before playing a sentence WAV', async () => {
+    const audio = {
+      currentTime: 0,
+      pause: vi.fn(),
+      play: vi.fn().mockResolvedValue(undefined),
+      addEventListener: vi.fn(),
+    }
+    vi.stubGlobal(
+      'Audio',
+      vi.fn(function MockAudio() {
+        return audio
+      }),
+    )
+    const speechSynthesis = { cancel: vi.fn(), speak: vi.fn() }
+    vi.stubGlobal('speechSynthesis', speechSynthesis)
+    vi.stubGlobal(
+      'SpeechSynthesisUtterance',
+      vi.fn(function MockSpeechSynthesisUtterance(this: { text: string; lang: string }, text: string) {
+        this.text = text
+        this.lang = ''
+      }),
+    )
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: string) => {
+        const body = input.endsWith('index.json')
+          ? { passages: [{ id: 'sample', title: 'sample' }] }
+          : passage
+        return new Response(JSON.stringify(body), { status: 200 })
+      }),
+    )
+    render(<App />)
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Hello 단어 읽기' }))
+    fireEvent.click(screen.getByRole('button', { name: '문장 1 읽기' }))
+
+    expect(speechSynthesis.cancel).toHaveBeenCalled()
     expect(audio.play).toHaveBeenCalledTimes(1)
   })
 
