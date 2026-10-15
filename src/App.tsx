@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+import { useAudioPlayer } from './audio/useAudioPlayer'
 import type { PreparedPassage } from './content/prepare'
 import {
   loadPassage,
@@ -13,6 +14,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState('')
   const [displayMode, setDisplayMode] = useState<'none' | 'translation' | 'pronunciation'>('none')
   const [error, setError] = useState<string | null>(null)
+  const { activeKey, hasLastTarget, play, replay, stop } = useAudioPlayer()
 
   useEffect(() => {
     let active = true
@@ -39,6 +41,7 @@ export default function App() {
   }, [])
 
   async function selectPassage(id: string) {
+    stop()
     setSelectedId(id)
     setError(null)
     setPassage(null)
@@ -89,6 +92,15 @@ export default function App() {
             발음 보기
           </button>
         </div>
+
+        <div className="audio-controls" aria-label="재생 제어">
+          <button type="button" onClick={replay} disabled={!hasLastTarget}>
+            다시 읽기
+          </button>
+          <button type="button" onClick={stop} disabled={!activeKey}>
+            멈추기
+          </button>
+        </div>
       </section>
 
       {error ? <p role="alert">{error}</p> : null}
@@ -100,7 +112,23 @@ export default function App() {
           <div className="sentence-list">
             {passage.sentences.map((sentence) => (
               <section key={sentence.id} className="sentence-row">
-                <p className="english-text">{sentence.english}</p>
+                <div className="sentence-heading">
+                  <button
+                    type="button"
+                    className="sentence-play"
+                    aria-label={`문장 ${sentence.id} 읽기`}
+                    onClick={() =>
+                      play({
+                        key: `sentence-${sentence.id}`,
+                        label: `문장 ${sentence.id}`,
+                        audioSrc: sentence.audioSrc,
+                      })
+                    }
+                  >
+                    ▶
+                  </button>
+                  <p className="english-text">{sentence.english}</p>
+                </div>
                 {displayMode === 'translation' ? (
                   <p className="korean-text">{sentence.translation}</p>
                 ) : null}
@@ -112,6 +140,9 @@ export default function App() {
           </div>
         </article>
       ) : null}
+      <p className="sr-only" aria-live="polite">
+        {activeKey ? '음성을 재생 중입니다.' : ''}
+      </p>
     </main>
   )
 }

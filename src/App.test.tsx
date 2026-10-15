@@ -61,4 +61,39 @@ describe('App', () => {
     expect(screen.queryByText('안녕하세요.')).not.toBeInTheDocument()
     expect(screen.getByText('헬로, 프렌드!')).toBeInTheDocument()
   })
+
+  it('plays, stops, and replays a selected sentence audio file', async () => {
+    const audio = {
+      currentTime: 0,
+      pause: vi.fn(),
+      play: vi.fn().mockResolvedValue(undefined),
+      addEventListener: vi.fn(),
+    }
+    const Audio = vi.fn(function MockAudio() {
+      return audio
+    })
+    vi.stubGlobal('Audio', Audio)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: string) => {
+        const body = input.endsWith('index.json')
+          ? { passages: [{ id: 'sample', title: 'sample' }] }
+          : passage
+        return new Response(JSON.stringify(body), { status: 200 })
+      }),
+    )
+    render(<App />)
+
+    fireEvent.click(await screen.findByRole('button', { name: '문장 1 읽기' }))
+    expect(Audio).toHaveBeenCalledWith('/content/sample/audio/sentences/001.wav')
+    expect(audio.play).toHaveBeenCalledTimes(1)
+
+    fireEvent.click(screen.getByRole('button', { name: '멈추기' }))
+    expect(audio.pause).toHaveBeenCalledTimes(1)
+    expect(audio.currentTime).toBe(0)
+
+    fireEvent.click(screen.getByRole('button', { name: '다시 읽기' }))
+    expect(Audio).toHaveBeenCalledTimes(2)
+    expect(audio.play).toHaveBeenCalledTimes(2)
+  })
 })
