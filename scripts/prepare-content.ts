@@ -21,6 +21,7 @@ const force = process.argv.includes('--force')
 const textModel = 'gemini-3.8-flash'
 const speechModel = 'gemini-3.8-flash-tts'
 const voice = 'Kore'
+const minimumRequestIntervalMs = 6_500
 
 type CachedSentence = {
   english: string
@@ -65,6 +66,15 @@ async function readCachedPassage(passagePath: string): Promise<Map<string, Cache
 
 function audioFilePath(audioSrc: string): string {
   return resolve(projectRoot, 'public', `.${audioSrc}`)
+}
+
+const sleep = (milliseconds: number) => new Promise((resolveSleep) => setTimeout(resolveSleep, milliseconds))
+
+function retryDelay(error: unknown): number | null {
+  const message = error instanceof Error ? error.message : String(error)
+  const seconds = /retry in (\d+)s/i.exec(message)?.[1]
+  if (!seconds) return null
+  return (Number(seconds) + 1) * 1_000
 }
 
 async function main() {
@@ -158,40 +168,57 @@ async function main() {
   }
 
   let createdAudioCount = 0
-  let nextJobIndex = 0
+  let nextRequestTime = 0
+
+  async function requestAudio(job: (typeof audioJobs)[number]) {
+    const waitTime = Math.max(0, nextRequestTime - Date.now())
+    if (waitTime) await sleep(waitTime)
+    nextRequestTime = Date.now() + minimumRequestIntervalMs
+
+    for (;;) {
+      try {
+        return await client.interactions.create({
+          model: speechModel,
+          input: [
+            {
+              type: 'user_input',
+              content: [
+                {
+                  type: 'text',
+                  text: job.text,
+                  annotations: [
+                    {
+                      type: 'speech_metadata',
+                      style: 'Read naturally and clearly for an English learner.',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          response_format: { type: 'audio' },
+          generation_config: {
+            speech_config: [{ voice }],
+          },
+        })
+      } catch (error) {
+        const delay = retryDelay(error)
+        if (delay === null) throw error
+        console.warn(`요청 한도 도달: ${Math.ceil(delay / 1_000)}초 후 재시도합니다.`)
+        await sleep(delay)
+        nextRequestTime = Date.now() + minimumRequestIntervalMs
+      }
+    }
+  }
+
   async function createAudioWorker() {
-    while (nextJobIndex < pendingJobs.length) {
-      const job = pendingJobs[nextJobIndex]
-      nextJobIndex += 1
+    for (const job of pendingJobs) {
       const outputPath = audioFilePath(job.audioSrc)
 
       await mkdir(dirname(outputPath), { recursive: true })
       createdAudioCount += 1
       console.log(`[audio ${createdAudioCount}/${pendingJobs.length}] ${job.label}`)
-      const response = await client.interactions.create({
-        model: speechModel,
-        input: [
-          {
-            type: 'user_input',
-            content: [
-              {
-                type: 'text',
-                text: job.text,
-                annotations: [
-                  {
-                    type: 'speech_metadata',
-                    style: 'Read naturally and clearly for an English learner.',
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-        response_format: { type: 'audio' },
-        generation_config: {
-          speech_config: [{ voice }],
-        },
-      })
+      const response = await requestAudio(job)
 
       if (!response.output_audio?.data) {
         throw new Error(`음성 데이터를 받지 못했습니다: ${job.label}`)
@@ -201,7 +228,7 @@ async function main() {
     }
   }
 
-  await Promise.all([createAudioWorker(), createAudioWorker()])
+  await createAudioWorker()
 
   console.log(`완료: 텍스트 보강 ${enrichedCount}개, 새 음성 ${createdAudioCount}개`)
 }

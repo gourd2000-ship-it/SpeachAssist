@@ -1,0 +1,1439 @@
+{
+  "id": "sample",
+  "title": "sample",
+  "sentences": [
+    {
+      "id": 1,
+      "english": "Hello. My name is 준서.",
+      "translation": "안녕하세요. 제 이름은 준서예요.",
+      "pronunciation": "헬로. 마이 네임 이즈 준서.",
+      "audioSrc": "/content/sample/audio/sentences/001.wav"
+    },
+    {
+      "id": 2,
+      "english": "I’m going to tell you about my story about traveling to Seoul.",
+      "translation": "제가 서울 여행했던 이야기를 들려드릴게요.",
+      "pronunciation": "아임 고잉 투 텔 유 어바웃 마이 스토리 어바웃 트래블링 투 서울",
+      "audioSrc": "/content/sample/audio/sentences/002.wav"
+    },
+    {
+      "id": 3,
+      "english": "I visited many places, but four places were very special to me.",
+      "translation": "많은 곳을 갔지만, 네 장소가 나에게 특별했어요.",
+      "pronunciation": "아이 비지티드 매니 플레이시즈, 벗 포 플레이시즈 워 베리 스페셜 투 미.",
+      "audioSrc": "/content/sample/audio/sentences/003.wav"
+    },
+    {
+      "id": 4,
+      "english": "And I left unforgettable memories.",
+      "translation": "그리고 잊을 수 없는 추억을 남겼죠.",
+      "pronunciation": "앤드 아이 레프트 언포게터블 메모리즈",
+      "audioSrc": "/content/sample/audio/sentences/004.wav"
+    },
+    {
+      "id": 5,
+      "english": "First, I went to Seodaemun Prison.",
+      "translation": "먼저 서대문 형무소에 갔어요.",
+      "pronunciation": "퍼스트, 아이 웬트 투 서대문 프리즌.",
+      "audioSrc": "/content/sample/audio/sentences/005.wav"
+    },
+    {
+      "id": 6,
+      "english": "I walked across a big green field and went into a red brick building.",
+      "translation": "넓은 잔디밭에 빨간 벽돌집으로 들어갔어요.",
+      "pronunciation": "아이 웍트 어크로스 어 빅 그린 필드 앤드 웬트 인투 어 레드 브릭 빌딩",
+      "audioSrc": "/content/sample/audio/sentences/006.wav"
+    },
+    {
+      "id": 7,
+      "english": "It was a history museum.",
+      "translation": "그곳은 역사전시관이었어요.",
+      "pronunciation": "잇 워즈 어 히스토리 뮤지엄",
+      "audioSrc": "/content/sample/audio/sentences/007.wav"
+    },
+    {
+      "id": 8,
+      "english": "Seodaemun Prison used during Japanese rule.",
+      "translation": "서대문 형무소는 일제강점기 때 사용되었어요.",
+      "pronunciation": "서대문 프리즌 유즈드 듀링 재패니즈 룰",
+      "audioSrc": "/content/sample/audio/sentences/008.wav"
+    },
+    {
+      "id": 9,
+      "english": "It was also used during the April 19 Revolution.",
+      "translation": "그리고 4.19혁명 때도 사용되었대요.",
+      "pronunciation": "잇 워즈 올소 유즈드 듀링 디 에이프릴 나인틴스 레벌루션",
+      "audioSrc": "/content/sample/audio/sentences/009.wav"
+    },
+    {
+      "id": 10,
+      "english": "Many people who fought for Korea's freedom and democracy were sent to this prison.",
+      "translation": "그곳에는 많은 독립 운동가들과 민주화 운동가들이 갇혀있었죠.",
+      "pronunciation": "매니 피플 후 포트 포 코리아즈 프리덤 앤 디모크러시 워 센트 투 디스 프리즌",
+      "audioSrc": "/content/sample/audio/sentences/010.wav"
+    },
+    {
+      "id": 11,
+      "english": "I also saw a place where prisoners were killed.",
+      "translation": "사형장도 있었어요.",
+      "pronunciation": "아이 올소 쏘 어 플레이스 웨얼 프리즈너즈 월 킬드",
+      "audioSrc": "/content/sample/audio/sentences/011.wav"
+    },
+    {
+      "id": 12,
+      "english": "There was a big rope inside.",
+      "translation": "사형장 안에는 큰 교수형대가 있었어요.",
+      "pronunciation": "데얼 워즈 어 빅 로우프 인사이드",
+      "audioSrc": "/content/sample/audio/sentences/012.wav"
+    },
+    {
+      "id": 13,
+      "english": "At first I didn’t know why there is a chair inside.",
+      "translation": "처음에는 왜 의자가 있는지 몰랐어요.",
+      "pronunciation": "앳 퍼스트 아이 디든트 노우 와이 데어리즈 어 체어 인사이드",
+      "audioSrc": "/content/sample/audio/sentences/013.wav"
+    },
+    {
+      "id": 14,
+      "english": "But when I know why, I scared and sad.",
+      "translation": "하지만, 알고 나니 무섭고 슬펐어요.",
+      "pronunciation": "벗 웬 아이 노 와이, 아이 스케어드 앤 새드",
+      "audioSrc": "/content/sample/audio/sentences/014.wav"
+    },
+    {
+      "id": 15,
+      "english": "In front of it, there was an exercise area.",
+      "translation": "그 앞에 격벽장도 있었어요.",
+      "pronunciation": "인 프런트 오브 잇, 데어 워즈 언 엑서사이즈 에어리어",
+      "audioSrc": "/content/sample/audio/sentences/015.wav"
+    },
+    {
+      "id": 16,
+      "english": "Prisoners could exercise there.",
+      "translation": "수감자들이 거기서 운동을 했어요.",
+      "pronunciation": "프리즈너즈 쿠드 엑서사이즈 데얼",
+      "audioSrc": "/content/sample/audio/sentences/016.wav"
+    },
+    {
+      "id": 17,
+      "english": "There was also a watchtower.",
+      "translation": "그리고 감시탑도 있었어요.",
+      "pronunciation": "데어 워즈 올소 어 와치타워",
+      "audioSrc": "/content/sample/audio/sentences/017.wav"
+    },
+    {
+      "id": 18,
+      "english": "Guards could watch all the prisoners from the tower.",
+      "translation": "모든 수감자들을 감시탑에서 감시할 수 있었죠.",
+      "pronunciation": "가즈 쿠드 왓치 올 더 프리즈너즈 프롬 더 타워",
+      "audioSrc": "/content/sample/audio/sentences/018.wav"
+    },
+    {
+      "id": 19,
+      "english": "The prison was very big, and the guards were very strict.",
+      "translation": "엄청 넓고 경비가 무서웠어요.",
+      "pronunciation": "더 프리즌 워즈 베리 빅, 앤 더 가즈 워 베리 스트릭트",
+      "audioSrc": "/content/sample/audio/sentences/019.wav"
+    },
+    {
+      "id": 20,
+      "english": "I felt scared.",
+      "translation": "나는 무서웠어요.",
+      "pronunciation": "아이 펠트 스케어드",
+      "audioSrc": "/content/sample/audio/sentences/020.wav"
+    },
+    {
+      "id": 21,
+      "english": "I thought, \"Why did Japan have to be so cruel?“",
+      "translation": "“일제가 이렇게 안 해도 됐었는데 왜 그렇게 잔인했을까?“ 라고 생각했어요.",
+      "pronunciation": "아이 쏘트, 와이 디드 저팬 해프 투 비 쏘 크루얼?",
+      "audioSrc": "/content/sample/audio/sentences/021.wav"
+    },
+    {
+      "id": 22,
+      "english": "The next day, I walked along the King 고종's Road to the old Russian building.",
+      "translation": "다음 날에는 고종의 길을 따라 구 러시아공사관 터를 갔어요.",
+      "pronunciation": "더 넥스트 데이, 아이 웍트 얼롱 더 킹 고종스 로드 투 디 올드 러시안 빌딩.",
+      "audioSrc": "/content/sample/audio/sentences/022.wav"
+    },
+    {
+      "id": 23,
+      "english": "It was the road King Gojong took a long time ago.",
+      "translation": "그것은 고종이 옛날 걸어갔던 길이에요.",
+      "pronunciation": "잇 워즈 더 로우드 킹 고종 투커 롱 타임 어고",
+      "audioSrc": "/content/sample/audio/sentences/023.wav"
+    },
+    {
+      "id": 24,
+      "english": "At first, I didn't know it was the King 고종‘s Road.",
+      "translation": "처음엔 고종의 길인지 몰랐어요.",
+      "pronunciation": "앳 퍼스트 아이 디든트 노우 잇 워즈 더 킹 고종스 로드",
+      "audioSrc": "/content/sample/audio/sentences/024.wav"
+    },
+    {
+      "id": 25,
+      "english": "But my older brother took a picture of the road sign.",
+      "translation": "형이 옆의 길이 고종의 길이라는 걸 찍었어요.",
+      "pronunciation": "벗 마이 올더 브라더 툭 어 픽처 오브 더 로드 사인",
+      "audioSrc": "/content/sample/audio/sentences/025.wav"
+    },
+    {
+      "id": 26,
+      "english": "He found the King's Road by chance!",
+      "translation": "형이 우연히 고종의 길을 맞추었지요.",
+      "pronunciation": "히 파운드 더 킹스 로드 바이 챈스!",
+      "audioSrc": "/content/sample/audio/sentences/026.wav"
+    },
+    {
+      "id": 27,
+      "english": "King Gojong walked along this road to the Russian building.",
+      "translation": "고종이 아관파천을 한 길을 따라 러시아공사관 터까지 걸어갔어요.",
+      "pronunciation": "킹 고종 웍트 얼롱 디스 로드 투 더 러시안 빌딩",
+      "audioSrc": "/content/sample/audio/sentences/027.wav"
+    },
+    {
+      "id": 28,
+      "english": "He was afraid of Japan after Queen Min was killed.",
+      "translation": "고종이 을미사변 때 두려워 공사관까지 갔어요.",
+      "pronunciation": "히 워즈 어프레이드 오브 재팬 애프터 퀸 민 워즈 킬드",
+      "audioSrc": "/content/sample/audio/sentences/028.wav"
+    },
+    {
+      "id": 29,
+      "english": "But I couldn't understand his choice.",
+      "translation": "저는 도저히 이해가 안 되었어요.",
+      "pronunciation": "벗 아이 쿠든트 언더스탠드 히즈 초이스",
+      "audioSrc": "/content/sample/audio/sentences/029.wav"
+    },
+    {
+      "id": 30,
+      "english": "He was the king!",
+      "translation": "고종은 왕이에요.",
+      "pronunciation": "히 워즈 더 킹!",
+      "audioSrc": "/content/sample/audio/sentences/030.wav"
+    },
+    {
+      "id": 31,
+      "english": "I thought he should stay at the palace and take care of his country.",
+      "translation": "고종은 궁에서 나라 업무를 봐야 할 사람이에요.",
+      "pronunciation": "아이 쏘트 히 슈드 스테이 앳 더 팰리스 앤드 테이크 케어 오브 히즈 컨트리",
+      "audioSrc": "/content/sample/audio/sentences/031.wav"
+    },
+    {
+      "id": 32,
+      "english": "But he was so afraid that he left the palace.",
+      "translation": "하지만 일제가 무서워 러시아 공사관으로 도망을 갔죠.",
+      "pronunciation": "벗 히 워즈 쏘 어프레이드 댓 히 레프트 더 팰리스",
+      "audioSrc": "/content/sample/audio/sentences/032.wav"
+    },
+    {
+      "id": 33,
+      "english": "For now, most of the old building was gone.",
+      "translation": "러시아 공사관은 터 밖에 안 남았어요.",
+      "pronunciation": "포 나우, 모스트 오브 디 올드 빌딩 워즈 곤.",
+      "audioSrc": "/content/sample/audio/sentences/033.wav"
+    },
+    {
+      "id": 34,
+      "english": "I was sad because there were almost nothing.",
+      "translation": "아무 것도 없어서 쓸쓸했어요.",
+      "pronunciation": "아이 워즈 새드 비코즈 데어 워 올모스트 낫씽",
+      "audioSrc": "/content/sample/audio/sentences/034.wav"
+    },
+    {
+      "id": 35,
+      "english": "But there were many signs about King Gojong and what happened next.",
+      "translation": "하지만 고종이 아관파천 이후에 대해 설명한 표지판들이 많아서 좋았어요.",
+      "pronunciation": "벗 데어 워 메니 사인즈 어바웃 킹 고종 앤드 왓 해픈드 넥스트",
+      "audioSrc": "/content/sample/audio/sentences/035.wav"
+    },
+    {
+      "id": 36,
+      "english": "So I learned a lot from them.",
+      "translation": "그래서 많은 것을 배울 수 있었어요.",
+      "pronunciation": "쏘 아이 런드 어 랏 프럼 뎀",
+      "audioSrc": "/content/sample/audio/sentences/036.wav"
+    },
+    {
+      "id": 37,
+      "english": "I still remember this place very well.",
+      "translation": "아직도 기억에 많이 남아요.",
+      "pronunciation": "아이 스틸 리멤버 디스 플레이스 베리 웰",
+      "audioSrc": "/content/sample/audio/sentences/037.wav"
+    },
+    {
+      "id": 38,
+      "english": "Next, I went to Gyeonghuigung Palace.",
+      "translation": "다음으로는 경희궁을 갔어요.",
+      "pronunciation": "넥스트, 아이 웬트 투 경희궁 팰리스.",
+      "audioSrc": "/content/sample/audio/sentences/038.wav"
+    },
+    {
+      "id": 39,
+      "english": "It was not as big as Gyeongbokgung Palace.",
+      "translation": "경복궁처럼 넓지는 않았어요.",
+      "pronunciation": "잇 워즈 낫 애즈 빅 애즈 경복궁 팰리스",
+      "audioSrc": "/content/sample/audio/sentences/039.wav"
+    },
+    {
+      "id": 40,
+      "english": "But many kings of Joseon lived there.",
+      "translation": "하지만 조선 왕들이 많이 지냈던 궁궐이에요.",
+      "pronunciation": "벗 매니 킹스 오브 조선 리브드 데어",
+      "audioSrc": "/content/sample/audio/sentences/040.wav"
+    },
+    {
+      "id": 41,
+      "english": "I saw signs showing where important people stood.",
+      "translation": "사진에서 봤던 정일품 종일품 푯말이 있었어요.",
+      "pronunciation": "아이 쏘 사인즈 쇼잉 웨어 임포턴트 피플 스투드",
+      "audioSrc": "/content/sample/audio/sentences/041.wav"
+    },
+    {
+      "id": 42,
+      "english": "I also saw the king's seat!",
+      "translation": "왕이 앉는 자리도 있었어요.",
+      "pronunciation": "아이 올소 쏘 더 킹스 시트!",
+      "audioSrc": "/content/sample/audio/sentences/042.wav"
+    },
+    {
+      "id": 43,
+      "english": "The palace was quiet and peaceful.",
+      "translation": "그곳은 조용하고 한가했어요.",
+      "pronunciation": "더 팰리스 워즈 콰이어트 앤드 피스풀",
+      "audioSrc": "/content/sample/audio/sentences/043.wav"
+    },
+    {
+      "id": 44,
+      "english": "I really liked it.",
+      "translation": "정말 좋았어요.",
+      "pronunciation": "아이 리얼리 라익팃",
+      "audioSrc": "/content/sample/audio/sentences/044.wav"
+    },
+    {
+      "id": 45,
+      "english": "There were only a few buildings.",
+      "translation": "경희궁에는 건물이 몇 개 없었어요.",
+      "pronunciation": "데얼 워 온리 어 퓨 빌딩스",
+      "audioSrc": "/content/sample/audio/sentences/045.wav"
+    },
+    {
+      "id": 46,
+      "english": "But I learned that the palace was once very big.",
+      "translation": "하지만 원래는 엄청 넓었대요.",
+      "pronunciation": "벗 아이 런드 댓 더 팰리스 워즈 원스 베리 빅",
+      "audioSrc": "/content/sample/audio/sentences/046.wav"
+    },
+    {
+      "id": 47,
+      "english": "Japan destroyed many buildings and took the land.",
+      "translation": "하지만 일제가 궁궐을 부수고 땅을 빼앗았대요.",
+      "pronunciation": "저팬 디스트로이드 매니 빌딩스 앤드 툭 더 랜드",
+      "audioSrc": "/content/sample/audio/sentences/047.wav"
+    },
+    {
+      "id": 48,
+      "english": "I felt sad.",
+      "translation": "슬펐어요",
+      "pronunciation": "아이 펠트 새드",
+      "audioSrc": "/content/sample/audio/sentences/048.wav"
+    },
+    {
+      "id": 49,
+      "english": "I wish I could see the big, beautiful palace from long ago.",
+      "translation": "옛날 넓었던 경희궁을 가보고 싶어요.",
+      "pronunciation": "아이 위시 아이 쿠드 씨 더 빅, 뷰티풀 팰리스 프럼 롱 어고",
+      "audioSrc": "/content/sample/audio/sentences/049.wav"
+    },
+    {
+      "id": 50,
+      "english": "Finally, I watched a drone show at the Han River.",
+      "translation": "마지막으로 한강 드론쇼를 봤어요.",
+      "pronunciation": "파이널리, 아이 왓치드 어 드론 쇼 앳 더 한 리버.",
+      "audioSrc": "/content/sample/audio/sentences/050.wav"
+    },
+    {
+      "id": 51,
+      "english": "It was my first drone show.",
+      "translation": "드론쇼는 처음 봤어요.",
+      "pronunciation": "잇 워즈 마이 퍼스트 드론 쇼",
+      "audioSrc": "/content/sample/audio/sentences/051.wav"
+    },
+    {
+      "id": 52,
+      "english": "It was even better than fireworks!",
+      "translation": "불꽃놀이보다 멋졌어요.",
+      "pronunciation": "잇 워즈 이븐 베러 댄 파이어워크스!",
+      "audioSrc": "/content/sample/audio/sentences/052.wav"
+    },
+    {
+      "id": 53,
+      "english": "There were so many people.",
+      "translation": "사람이 너무 많았어요.",
+      "pronunciation": "데어 워 쏘 매니 피플",
+      "audioSrc": "/content/sample/audio/sentences/053.wav"
+    },
+    {
+      "id": 54,
+      "english": "I was worried,",
+      "translation": "난 걱정됐어요",
+      "pronunciation": "아이 워즈 워리드,",
+      "audioSrc": "/content/sample/audio/sentences/054.wav"
+    },
+    {
+      "id": 55,
+      "english": "But luckily, we found one!",
+      "translation": "하지만 다행히 자리를 잡았죠.",
+      "pronunciation": "벗 럭킬리, 위 파운드 원!",
+      "audioSrc": "/content/sample/audio/sentences/055.wav"
+    },
+    {
+      "id": 56,
+      "english": "The drones made beautiful pictures in the night sky.",
+      "translation": "드론은 하늘에 멋지게 그림을 그렸어요.",
+      "pronunciation": "더 드론즈 메이드 뷰티풀 픽처스 인 더 나이트 스카이",
+      "audioSrc": "/content/sample/audio/sentences/056.wav"
+    },
+    {
+      "id": 57,
+      "english": "It was amazing!",
+      "translation": "그건 정말 멋졌어요.",
+      "pronunciation": "잇 워즈 어메이징!",
+      "audioSrc": "/content/sample/audio/sentences/057.wav"
+    },
+    {
+      "id": 58,
+      "english": "I really liked the story, too.",
+      "translation": "특히 스토리도 재미있었어요.",
+      "pronunciation": "아이 리얼리 라익트 더 스토리 투",
+      "audioSrc": "/content/sample/audio/sentences/058.wav"
+    },
+    {
+      "id": 59,
+      "english": "At first, a parrot came out and picked up a bottle.",
+      "translation": "먼저 앵무새가 병을 집었어요.",
+      "pronunciation": "앳 퍼스트, 어 패럿 케임 아웃 앤 픽텁 어 바틀.",
+      "audioSrc": "/content/sample/audio/sentences/059.wav"
+    },
+    {
+      "id": 60,
+      "english": "There was a map inside the bottle.",
+      "translation": "그 병에서 지도가 나왔죠.",
+      "pronunciation": "데얼 워즈 어 맵 인사이드 더 바틀",
+      "audioSrc": "/content/sample/audio/sentences/060.wav"
+    },
+    {
+      "id": 61,
+      "english": "Pirates followed the map to find treasure.",
+      "translation": "해적들이 지도를 따라가 보물을 찾는다는 내용이었어요.",
+      "pronunciation": "파이러츠 팔로드 더 맵 투 파인드 트레저",
+      "audioSrc": "/content/sample/audio/sentences/061.wav"
+    },
+    {
+      "id": 62,
+      "english": "And guess what?",
+      "translation": "그리고 아세요?",
+      "pronunciation": "앤드 게스 왓?",
+      "audioSrc": "/content/sample/audio/sentences/062.wav"
+    },
+    {
+      "id": 63,
+      "english": "The treasure was in Seoul!",
+      "translation": "보물은 서울에 있었죠!",
+      "pronunciation": "더 트레저 워즈 인 소울!",
+      "audioSrc": "/content/sample/audio/sentences/063.wav"
+    },
+    {
+      "id": 64,
+      "english": "It was a great show.",
+      "translation": "멋진 공연이었어요.",
+      "pronunciation": "잇 워즈 어 그레이트 쇼",
+      "audioSrc": "/content/sample/audio/sentences/064.wav"
+    },
+    {
+      "id": 65,
+      "english": "After the show, we took the subway back to our hotel.",
+      "translation": "공연이 끝나고 지하철을 타고 호텔로 갔어요",
+      "pronunciation": "애프터 더 쇼, 위 툭 더 서브웨이 백 투 아워 호텔",
+      "audioSrc": "/content/sample/audio/sentences/065.wav"
+    },
+    {
+      "id": 66,
+      "english": "There were so many people that we almost couldn't get on the train.",
+      "translation": "너무 사람이 많아 못 탈 뻔 했어요.",
+      "pronunciation": "데얼 워 쏘 매니 피플 댓 위 올모스트 쿠든트 겟 온 더 트레인",
+      "audioSrc": "/content/sample/audio/sentences/066.wav"
+    },
+    {
+      "id": 67,
+      "english": "But we got back safely.",
+      "translation": "하지만 무사히 숙소에 돌아왔어요.",
+      "pronunciation": "벗 위 갓 백 세이플리",
+      "audioSrc": "/content/sample/audio/sentences/067.wav"
+    },
+    {
+      "id": 68,
+      "english": "I visited many other places in Seoul.",
+      "translation": "더 많은 곳을 갔어요.",
+      "pronunciation": "아이 비지티드 매니 어더 플레이시즈 인 소울",
+      "audioSrc": "/content/sample/audio/sentences/068.wav"
+    },
+    {
+      "id": 69,
+      "english": "But these four places were the most special to me.",
+      "translation": "하지만 위 네 곳이 가장 기억에 남는 곳이었어요.",
+      "pronunciation": "벗 디즈 포어 플레이시즈 워 더 모스트 스페셜 투 미",
+      "audioSrc": "/content/sample/audio/sentences/069.wav"
+    },
+    {
+      "id": 70,
+      "english": "I learned a lot about Korean history in Seoul.",
+      "translation": "서울에서 우리나라 역사에 대해 많은 것을 배웠어요.",
+      "pronunciation": "아이 런드 어 랏 어바웃 코리언 히스토리 인 서울",
+      "audioSrc": "/content/sample/audio/sentences/070.wav"
+    },
+    {
+      "id": 71,
+      "english": "And I had a wonderful time.",
+      "translation": "그리고 멋진 시간을 보냈죠.",
+      "pronunciation": "앤 아이 해드 어 원더풀 타임",
+      "audioSrc": "/content/sample/audio/sentences/071.wav"
+    },
+    {
+      "id": 72,
+      "english": "Next time, I want to visit more palaces in Seoul.",
+      "translation": "다음에는 다른 궁궐들을 가보고 싶어요.",
+      "pronunciation": "넥스트 타임, 아이 원트 투 비짓 모어 팰러시즈 인 서울.",
+      "audioSrc": "/content/sample/audio/sentences/072.wav"
+    },
+    {
+      "id": 73,
+      "english": "Thank you for listening!",
+      "translation": "들어주셔서 고맙습니다.",
+      "pronunciation": "땡큐 포 리스닝!",
+      "audioSrc": "/content/sample/audio/sentences/073.wav"
+    }
+  ],
+  "words": [
+    {
+      "key": "hello",
+      "audioSrc": "/content/sample/audio/words/hello.wav"
+    },
+    {
+      "key": "my",
+      "audioSrc": "/content/sample/audio/words/my.wav"
+    },
+    {
+      "key": "name",
+      "audioSrc": "/content/sample/audio/words/name.wav"
+    },
+    {
+      "key": "is",
+      "audioSrc": "/content/sample/audio/words/is.wav"
+    },
+    {
+      "key": "i'm",
+      "audioSrc": "/content/sample/audio/words/i'm.wav"
+    },
+    {
+      "key": "going",
+      "audioSrc": "/content/sample/audio/words/going.wav"
+    },
+    {
+      "key": "to",
+      "audioSrc": "/content/sample/audio/words/to.wav"
+    },
+    {
+      "key": "tell",
+      "audioSrc": "/content/sample/audio/words/tell.wav"
+    },
+    {
+      "key": "you",
+      "audioSrc": "/content/sample/audio/words/you.wav"
+    },
+    {
+      "key": "about",
+      "audioSrc": "/content/sample/audio/words/about.wav"
+    },
+    {
+      "key": "story",
+      "audioSrc": "/content/sample/audio/words/story.wav"
+    },
+    {
+      "key": "traveling",
+      "audioSrc": "/content/sample/audio/words/traveling.wav"
+    },
+    {
+      "key": "seoul",
+      "audioSrc": "/content/sample/audio/words/seoul.wav"
+    },
+    {
+      "key": "i",
+      "audioSrc": "/content/sample/audio/words/i.wav"
+    },
+    {
+      "key": "visited",
+      "audioSrc": "/content/sample/audio/words/visited.wav"
+    },
+    {
+      "key": "many",
+      "audioSrc": "/content/sample/audio/words/many.wav"
+    },
+    {
+      "key": "places",
+      "audioSrc": "/content/sample/audio/words/places.wav"
+    },
+    {
+      "key": "but",
+      "audioSrc": "/content/sample/audio/words/but.wav"
+    },
+    {
+      "key": "four",
+      "audioSrc": "/content/sample/audio/words/four.wav"
+    },
+    {
+      "key": "were",
+      "audioSrc": "/content/sample/audio/words/were.wav"
+    },
+    {
+      "key": "very",
+      "audioSrc": "/content/sample/audio/words/very.wav"
+    },
+    {
+      "key": "special",
+      "audioSrc": "/content/sample/audio/words/special.wav"
+    },
+    {
+      "key": "me",
+      "audioSrc": "/content/sample/audio/words/me.wav"
+    },
+    {
+      "key": "and",
+      "audioSrc": "/content/sample/audio/words/and.wav"
+    },
+    {
+      "key": "left",
+      "audioSrc": "/content/sample/audio/words/left.wav"
+    },
+    {
+      "key": "unforgettable",
+      "audioSrc": "/content/sample/audio/words/unforgettable.wav"
+    },
+    {
+      "key": "memories",
+      "audioSrc": "/content/sample/audio/words/memories.wav"
+    },
+    {
+      "key": "first",
+      "audioSrc": "/content/sample/audio/words/first.wav"
+    },
+    {
+      "key": "went",
+      "audioSrc": "/content/sample/audio/words/went.wav"
+    },
+    {
+      "key": "seodaemun",
+      "audioSrc": "/content/sample/audio/words/seodaemun.wav"
+    },
+    {
+      "key": "prison",
+      "audioSrc": "/content/sample/audio/words/prison.wav"
+    },
+    {
+      "key": "walked",
+      "audioSrc": "/content/sample/audio/words/walked.wav"
+    },
+    {
+      "key": "across",
+      "audioSrc": "/content/sample/audio/words/across.wav"
+    },
+    {
+      "key": "a",
+      "audioSrc": "/content/sample/audio/words/a.wav"
+    },
+    {
+      "key": "big",
+      "audioSrc": "/content/sample/audio/words/big.wav"
+    },
+    {
+      "key": "green",
+      "audioSrc": "/content/sample/audio/words/green.wav"
+    },
+    {
+      "key": "field",
+      "audioSrc": "/content/sample/audio/words/field.wav"
+    },
+    {
+      "key": "into",
+      "audioSrc": "/content/sample/audio/words/into.wav"
+    },
+    {
+      "key": "red",
+      "audioSrc": "/content/sample/audio/words/red.wav"
+    },
+    {
+      "key": "brick",
+      "audioSrc": "/content/sample/audio/words/brick.wav"
+    },
+    {
+      "key": "building",
+      "audioSrc": "/content/sample/audio/words/building.wav"
+    },
+    {
+      "key": "it",
+      "audioSrc": "/content/sample/audio/words/it.wav"
+    },
+    {
+      "key": "was",
+      "audioSrc": "/content/sample/audio/words/was.wav"
+    },
+    {
+      "key": "history",
+      "audioSrc": "/content/sample/audio/words/history.wav"
+    },
+    {
+      "key": "museum",
+      "audioSrc": "/content/sample/audio/words/museum.wav"
+    },
+    {
+      "key": "used",
+      "audioSrc": "/content/sample/audio/words/used.wav"
+    },
+    {
+      "key": "during",
+      "audioSrc": "/content/sample/audio/words/during.wav"
+    },
+    {
+      "key": "japanese",
+      "audioSrc": "/content/sample/audio/words/japanese.wav"
+    },
+    {
+      "key": "rule",
+      "audioSrc": "/content/sample/audio/words/rule.wav"
+    },
+    {
+      "key": "also",
+      "audioSrc": "/content/sample/audio/words/also.wav"
+    },
+    {
+      "key": "the",
+      "audioSrc": "/content/sample/audio/words/the.wav"
+    },
+    {
+      "key": "april",
+      "audioSrc": "/content/sample/audio/words/april.wav"
+    },
+    {
+      "key": "revolution",
+      "audioSrc": "/content/sample/audio/words/revolution.wav"
+    },
+    {
+      "key": "people",
+      "audioSrc": "/content/sample/audio/words/people.wav"
+    },
+    {
+      "key": "who",
+      "audioSrc": "/content/sample/audio/words/who.wav"
+    },
+    {
+      "key": "fought",
+      "audioSrc": "/content/sample/audio/words/fought.wav"
+    },
+    {
+      "key": "for",
+      "audioSrc": "/content/sample/audio/words/for.wav"
+    },
+    {
+      "key": "korea's",
+      "audioSrc": "/content/sample/audio/words/korea's.wav"
+    },
+    {
+      "key": "freedom",
+      "audioSrc": "/content/sample/audio/words/freedom.wav"
+    },
+    {
+      "key": "democracy",
+      "audioSrc": "/content/sample/audio/words/democracy.wav"
+    },
+    {
+      "key": "sent",
+      "audioSrc": "/content/sample/audio/words/sent.wav"
+    },
+    {
+      "key": "this",
+      "audioSrc": "/content/sample/audio/words/this.wav"
+    },
+    {
+      "key": "saw",
+      "audioSrc": "/content/sample/audio/words/saw.wav"
+    },
+    {
+      "key": "place",
+      "audioSrc": "/content/sample/audio/words/place.wav"
+    },
+    {
+      "key": "where",
+      "audioSrc": "/content/sample/audio/words/where.wav"
+    },
+    {
+      "key": "prisoners",
+      "audioSrc": "/content/sample/audio/words/prisoners.wav"
+    },
+    {
+      "key": "killed",
+      "audioSrc": "/content/sample/audio/words/killed.wav"
+    },
+    {
+      "key": "there",
+      "audioSrc": "/content/sample/audio/words/there.wav"
+    },
+    {
+      "key": "rope",
+      "audioSrc": "/content/sample/audio/words/rope.wav"
+    },
+    {
+      "key": "inside",
+      "audioSrc": "/content/sample/audio/words/inside.wav"
+    },
+    {
+      "key": "at",
+      "audioSrc": "/content/sample/audio/words/at.wav"
+    },
+    {
+      "key": "didn't",
+      "audioSrc": "/content/sample/audio/words/didn't.wav"
+    },
+    {
+      "key": "know",
+      "audioSrc": "/content/sample/audio/words/know.wav"
+    },
+    {
+      "key": "why",
+      "audioSrc": "/content/sample/audio/words/why.wav"
+    },
+    {
+      "key": "chair",
+      "audioSrc": "/content/sample/audio/words/chair.wav"
+    },
+    {
+      "key": "when",
+      "audioSrc": "/content/sample/audio/words/when.wav"
+    },
+    {
+      "key": "scared",
+      "audioSrc": "/content/sample/audio/words/scared.wav"
+    },
+    {
+      "key": "sad",
+      "audioSrc": "/content/sample/audio/words/sad.wav"
+    },
+    {
+      "key": "in",
+      "audioSrc": "/content/sample/audio/words/in.wav"
+    },
+    {
+      "key": "front",
+      "audioSrc": "/content/sample/audio/words/front.wav"
+    },
+    {
+      "key": "of",
+      "audioSrc": "/content/sample/audio/words/of.wav"
+    },
+    {
+      "key": "an",
+      "audioSrc": "/content/sample/audio/words/an.wav"
+    },
+    {
+      "key": "exercise",
+      "audioSrc": "/content/sample/audio/words/exercise.wav"
+    },
+    {
+      "key": "area",
+      "audioSrc": "/content/sample/audio/words/area.wav"
+    },
+    {
+      "key": "could",
+      "audioSrc": "/content/sample/audio/words/could.wav"
+    },
+    {
+      "key": "watchtower",
+      "audioSrc": "/content/sample/audio/words/watchtower.wav"
+    },
+    {
+      "key": "guards",
+      "audioSrc": "/content/sample/audio/words/guards.wav"
+    },
+    {
+      "key": "watch",
+      "audioSrc": "/content/sample/audio/words/watch.wav"
+    },
+    {
+      "key": "all",
+      "audioSrc": "/content/sample/audio/words/all.wav"
+    },
+    {
+      "key": "from",
+      "audioSrc": "/content/sample/audio/words/from.wav"
+    },
+    {
+      "key": "tower",
+      "audioSrc": "/content/sample/audio/words/tower.wav"
+    },
+    {
+      "key": "strict",
+      "audioSrc": "/content/sample/audio/words/strict.wav"
+    },
+    {
+      "key": "felt",
+      "audioSrc": "/content/sample/audio/words/felt.wav"
+    },
+    {
+      "key": "thought",
+      "audioSrc": "/content/sample/audio/words/thought.wav"
+    },
+    {
+      "key": "did",
+      "audioSrc": "/content/sample/audio/words/did.wav"
+    },
+    {
+      "key": "japan",
+      "audioSrc": "/content/sample/audio/words/japan.wav"
+    },
+    {
+      "key": "have",
+      "audioSrc": "/content/sample/audio/words/have.wav"
+    },
+    {
+      "key": "be",
+      "audioSrc": "/content/sample/audio/words/be.wav"
+    },
+    {
+      "key": "so",
+      "audioSrc": "/content/sample/audio/words/so.wav"
+    },
+    {
+      "key": "cruel",
+      "audioSrc": "/content/sample/audio/words/cruel.wav"
+    },
+    {
+      "key": "next",
+      "audioSrc": "/content/sample/audio/words/next.wav"
+    },
+    {
+      "key": "day",
+      "audioSrc": "/content/sample/audio/words/day.wav"
+    },
+    {
+      "key": "along",
+      "audioSrc": "/content/sample/audio/words/along.wav"
+    },
+    {
+      "key": "king",
+      "audioSrc": "/content/sample/audio/words/king.wav"
+    },
+    {
+      "key": "s",
+      "audioSrc": "/content/sample/audio/words/s.wav"
+    },
+    {
+      "key": "road",
+      "audioSrc": "/content/sample/audio/words/road.wav"
+    },
+    {
+      "key": "old",
+      "audioSrc": "/content/sample/audio/words/old.wav"
+    },
+    {
+      "key": "russian",
+      "audioSrc": "/content/sample/audio/words/russian.wav"
+    },
+    {
+      "key": "gojong",
+      "audioSrc": "/content/sample/audio/words/gojong.wav"
+    },
+    {
+      "key": "took",
+      "audioSrc": "/content/sample/audio/words/took.wav"
+    },
+    {
+      "key": "long",
+      "audioSrc": "/content/sample/audio/words/long.wav"
+    },
+    {
+      "key": "time",
+      "audioSrc": "/content/sample/audio/words/time.wav"
+    },
+    {
+      "key": "ago",
+      "audioSrc": "/content/sample/audio/words/ago.wav"
+    },
+    {
+      "key": "older",
+      "audioSrc": "/content/sample/audio/words/older.wav"
+    },
+    {
+      "key": "brother",
+      "audioSrc": "/content/sample/audio/words/brother.wav"
+    },
+    {
+      "key": "picture",
+      "audioSrc": "/content/sample/audio/words/picture.wav"
+    },
+    {
+      "key": "sign",
+      "audioSrc": "/content/sample/audio/words/sign.wav"
+    },
+    {
+      "key": "he",
+      "audioSrc": "/content/sample/audio/words/he.wav"
+    },
+    {
+      "key": "found",
+      "audioSrc": "/content/sample/audio/words/found.wav"
+    },
+    {
+      "key": "king's",
+      "audioSrc": "/content/sample/audio/words/king's.wav"
+    },
+    {
+      "key": "by",
+      "audioSrc": "/content/sample/audio/words/by.wav"
+    },
+    {
+      "key": "chance",
+      "audioSrc": "/content/sample/audio/words/chance.wav"
+    },
+    {
+      "key": "afraid",
+      "audioSrc": "/content/sample/audio/words/afraid.wav"
+    },
+    {
+      "key": "after",
+      "audioSrc": "/content/sample/audio/words/after.wav"
+    },
+    {
+      "key": "queen",
+      "audioSrc": "/content/sample/audio/words/queen.wav"
+    },
+    {
+      "key": "min",
+      "audioSrc": "/content/sample/audio/words/min.wav"
+    },
+    {
+      "key": "couldn't",
+      "audioSrc": "/content/sample/audio/words/couldn't.wav"
+    },
+    {
+      "key": "understand",
+      "audioSrc": "/content/sample/audio/words/understand.wav"
+    },
+    {
+      "key": "his",
+      "audioSrc": "/content/sample/audio/words/his.wav"
+    },
+    {
+      "key": "choice",
+      "audioSrc": "/content/sample/audio/words/choice.wav"
+    },
+    {
+      "key": "should",
+      "audioSrc": "/content/sample/audio/words/should.wav"
+    },
+    {
+      "key": "stay",
+      "audioSrc": "/content/sample/audio/words/stay.wav"
+    },
+    {
+      "key": "palace",
+      "audioSrc": "/content/sample/audio/words/palace.wav"
+    },
+    {
+      "key": "take",
+      "audioSrc": "/content/sample/audio/words/take.wav"
+    },
+    {
+      "key": "care",
+      "audioSrc": "/content/sample/audio/words/care.wav"
+    },
+    {
+      "key": "country",
+      "audioSrc": "/content/sample/audio/words/country.wav"
+    },
+    {
+      "key": "that",
+      "audioSrc": "/content/sample/audio/words/that.wav"
+    },
+    {
+      "key": "now",
+      "audioSrc": "/content/sample/audio/words/now.wav"
+    },
+    {
+      "key": "most",
+      "audioSrc": "/content/sample/audio/words/most.wav"
+    },
+    {
+      "key": "gone",
+      "audioSrc": "/content/sample/audio/words/gone.wav"
+    },
+    {
+      "key": "because",
+      "audioSrc": "/content/sample/audio/words/because.wav"
+    },
+    {
+      "key": "almost",
+      "audioSrc": "/content/sample/audio/words/almost.wav"
+    },
+    {
+      "key": "nothing",
+      "audioSrc": "/content/sample/audio/words/nothing.wav"
+    },
+    {
+      "key": "signs",
+      "audioSrc": "/content/sample/audio/words/signs.wav"
+    },
+    {
+      "key": "what",
+      "audioSrc": "/content/sample/audio/words/what.wav"
+    },
+    {
+      "key": "happened",
+      "audioSrc": "/content/sample/audio/words/happened.wav"
+    },
+    {
+      "key": "learned",
+      "audioSrc": "/content/sample/audio/words/learned.wav"
+    },
+    {
+      "key": "lot",
+      "audioSrc": "/content/sample/audio/words/lot.wav"
+    },
+    {
+      "key": "them",
+      "audioSrc": "/content/sample/audio/words/them.wav"
+    },
+    {
+      "key": "still",
+      "audioSrc": "/content/sample/audio/words/still.wav"
+    },
+    {
+      "key": "remember",
+      "audioSrc": "/content/sample/audio/words/remember.wav"
+    },
+    {
+      "key": "well",
+      "audioSrc": "/content/sample/audio/words/well.wav"
+    },
+    {
+      "key": "gyeonghuigung",
+      "audioSrc": "/content/sample/audio/words/gyeonghuigung.wav"
+    },
+    {
+      "key": "not",
+      "audioSrc": "/content/sample/audio/words/not.wav"
+    },
+    {
+      "key": "as",
+      "audioSrc": "/content/sample/audio/words/as.wav"
+    },
+    {
+      "key": "gyeongbokgung",
+      "audioSrc": "/content/sample/audio/words/gyeongbokgung.wav"
+    },
+    {
+      "key": "kings",
+      "audioSrc": "/content/sample/audio/words/kings.wav"
+    },
+    {
+      "key": "joseon",
+      "audioSrc": "/content/sample/audio/words/joseon.wav"
+    },
+    {
+      "key": "lived",
+      "audioSrc": "/content/sample/audio/words/lived.wav"
+    },
+    {
+      "key": "showing",
+      "audioSrc": "/content/sample/audio/words/showing.wav"
+    },
+    {
+      "key": "important",
+      "audioSrc": "/content/sample/audio/words/important.wav"
+    },
+    {
+      "key": "stood",
+      "audioSrc": "/content/sample/audio/words/stood.wav"
+    },
+    {
+      "key": "seat",
+      "audioSrc": "/content/sample/audio/words/seat.wav"
+    },
+    {
+      "key": "quiet",
+      "audioSrc": "/content/sample/audio/words/quiet.wav"
+    },
+    {
+      "key": "peaceful",
+      "audioSrc": "/content/sample/audio/words/peaceful.wav"
+    },
+    {
+      "key": "really",
+      "audioSrc": "/content/sample/audio/words/really.wav"
+    },
+    {
+      "key": "liked",
+      "audioSrc": "/content/sample/audio/words/liked.wav"
+    },
+    {
+      "key": "only",
+      "audioSrc": "/content/sample/audio/words/only.wav"
+    },
+    {
+      "key": "few",
+      "audioSrc": "/content/sample/audio/words/few.wav"
+    },
+    {
+      "key": "buildings",
+      "audioSrc": "/content/sample/audio/words/buildings.wav"
+    },
+    {
+      "key": "once",
+      "audioSrc": "/content/sample/audio/words/once.wav"
+    },
+    {
+      "key": "destroyed",
+      "audioSrc": "/content/sample/audio/words/destroyed.wav"
+    },
+    {
+      "key": "land",
+      "audioSrc": "/content/sample/audio/words/land.wav"
+    },
+    {
+      "key": "wish",
+      "audioSrc": "/content/sample/audio/words/wish.wav"
+    },
+    {
+      "key": "see",
+      "audioSrc": "/content/sample/audio/words/see.wav"
+    },
+    {
+      "key": "beautiful",
+      "audioSrc": "/content/sample/audio/words/beautiful.wav"
+    },
+    {
+      "key": "finally",
+      "audioSrc": "/content/sample/audio/words/finally.wav"
+    },
+    {
+      "key": "watched",
+      "audioSrc": "/content/sample/audio/words/watched.wav"
+    },
+    {
+      "key": "drone",
+      "audioSrc": "/content/sample/audio/words/drone.wav"
+    },
+    {
+      "key": "show",
+      "audioSrc": "/content/sample/audio/words/show.wav"
+    },
+    {
+      "key": "han",
+      "audioSrc": "/content/sample/audio/words/han.wav"
+    },
+    {
+      "key": "river",
+      "audioSrc": "/content/sample/audio/words/river.wav"
+    },
+    {
+      "key": "even",
+      "audioSrc": "/content/sample/audio/words/even.wav"
+    },
+    {
+      "key": "better",
+      "audioSrc": "/content/sample/audio/words/better.wav"
+    },
+    {
+      "key": "than",
+      "audioSrc": "/content/sample/audio/words/than.wav"
+    },
+    {
+      "key": "fireworks",
+      "audioSrc": "/content/sample/audio/words/fireworks.wav"
+    },
+    {
+      "key": "worried",
+      "audioSrc": "/content/sample/audio/words/worried.wav"
+    },
+    {
+      "key": "luckily",
+      "audioSrc": "/content/sample/audio/words/luckily.wav"
+    },
+    {
+      "key": "we",
+      "audioSrc": "/content/sample/audio/words/we.wav"
+    },
+    {
+      "key": "one",
+      "audioSrc": "/content/sample/audio/words/one.wav"
+    },
+    {
+      "key": "drones",
+      "audioSrc": "/content/sample/audio/words/drones.wav"
+    },
+    {
+      "key": "made",
+      "audioSrc": "/content/sample/audio/words/made.wav"
+    },
+    {
+      "key": "pictures",
+      "audioSrc": "/content/sample/audio/words/pictures.wav"
+    },
+    {
+      "key": "night",
+      "audioSrc": "/content/sample/audio/words/night.wav"
+    },
+    {
+      "key": "sky",
+      "audioSrc": "/content/sample/audio/words/sky.wav"
+    },
+    {
+      "key": "amazing",
+      "audioSrc": "/content/sample/audio/words/amazing.wav"
+    },
+    {
+      "key": "too",
+      "audioSrc": "/content/sample/audio/words/too.wav"
+    },
+    {
+      "key": "parrot",
+      "audioSrc": "/content/sample/audio/words/parrot.wav"
+    },
+    {
+      "key": "came",
+      "audioSrc": "/content/sample/audio/words/came.wav"
+    },
+    {
+      "key": "out",
+      "audioSrc": "/content/sample/audio/words/out.wav"
+    },
+    {
+      "key": "picked",
+      "audioSrc": "/content/sample/audio/words/picked.wav"
+    },
+    {
+      "key": "up",
+      "audioSrc": "/content/sample/audio/words/up.wav"
+    },
+    {
+      "key": "bottle",
+      "audioSrc": "/content/sample/audio/words/bottle.wav"
+    },
+    {
+      "key": "map",
+      "audioSrc": "/content/sample/audio/words/map.wav"
+    },
+    {
+      "key": "pirates",
+      "audioSrc": "/content/sample/audio/words/pirates.wav"
+    },
+    {
+      "key": "followed",
+      "audioSrc": "/content/sample/audio/words/followed.wav"
+    },
+    {
+      "key": "find",
+      "audioSrc": "/content/sample/audio/words/find.wav"
+    },
+    {
+      "key": "treasure",
+      "audioSrc": "/content/sample/audio/words/treasure.wav"
+    },
+    {
+      "key": "guess",
+      "audioSrc": "/content/sample/audio/words/guess.wav"
+    },
+    {
+      "key": "great",
+      "audioSrc": "/content/sample/audio/words/great.wav"
+    },
+    {
+      "key": "subway",
+      "audioSrc": "/content/sample/audio/words/subway.wav"
+    },
+    {
+      "key": "back",
+      "audioSrc": "/content/sample/audio/words/back.wav"
+    },
+    {
+      "key": "our",
+      "audioSrc": "/content/sample/audio/words/our.wav"
+    },
+    {
+      "key": "hotel",
+      "audioSrc": "/content/sample/audio/words/hotel.wav"
+    },
+    {
+      "key": "get",
+      "audioSrc": "/content/sample/audio/words/get.wav"
+    },
+    {
+      "key": "on",
+      "audioSrc": "/content/sample/audio/words/on.wav"
+    },
+    {
+      "key": "train",
+      "audioSrc": "/content/sample/audio/words/train.wav"
+    },
+    {
+      "key": "got",
+      "audioSrc": "/content/sample/audio/words/got.wav"
+    },
+    {
+      "key": "safely",
+      "audioSrc": "/content/sample/audio/words/safely.wav"
+    },
+    {
+      "key": "other",
+      "audioSrc": "/content/sample/audio/words/other.wav"
+    },
+    {
+      "key": "these",
+      "audioSrc": "/content/sample/audio/words/these.wav"
+    },
+    {
+      "key": "korean",
+      "audioSrc": "/content/sample/audio/words/korean.wav"
+    },
+    {
+      "key": "had",
+      "audioSrc": "/content/sample/audio/words/had.wav"
+    },
+    {
+      "key": "wonderful",
+      "audioSrc": "/content/sample/audio/words/wonderful.wav"
+    },
+    {
+      "key": "want",
+      "audioSrc": "/content/sample/audio/words/want.wav"
+    },
+    {
+      "key": "visit",
+      "audioSrc": "/content/sample/audio/words/visit.wav"
+    },
+    {
+      "key": "more",
+      "audioSrc": "/content/sample/audio/words/more.wav"
+    },
+    {
+      "key": "palaces",
+      "audioSrc": "/content/sample/audio/words/palaces.wav"
+    },
+    {
+      "key": "thank",
+      "audioSrc": "/content/sample/audio/words/thank.wav"
+    },
+    {
+      "key": "listening",
+      "audioSrc": "/content/sample/audio/words/listening.wav"
+    }
+  ]
+}
