@@ -31,19 +31,29 @@ const isWave = async (path: string) => {
     const bytes = await readFile(path)
     if (bytes.length < 20 || !bytes.subarray(0, 4).equals(Buffer.from('RIFF')) || !bytes.subarray(8, 12).equals(Buffer.from('WAVE')) || bytes.readUInt32LE(4) !== bytes.length - 8) return false
     let offset = 12
-    let hasFormat = false
-    let hasData = false
+    let format: { audioFormat: number; channels: number; sampleRate: number; byteRate: number; blockAlign: number; bitDepth: number } | null = null
+    const dataSizes: number[] = []
     while (offset < bytes.length) {
       if (offset + 8 > bytes.length) return false
       const chunkSize = bytes.readUInt32LE(offset + 4)
       const nextOffset = offset + 8 + chunkSize + (chunkSize % 2)
       if (nextOffset > bytes.length) return false
       const chunk = bytes.subarray(offset, offset + 4).toString('ascii')
-      if (chunk === 'fmt ') hasFormat = chunkSize >= 16
-      if (chunk === 'data') hasData = true
+      if (chunk === 'fmt ' && chunkSize >= 16) format = {
+        audioFormat: bytes.readUInt16LE(offset + 8),
+        channels: bytes.readUInt16LE(offset + 10),
+        sampleRate: bytes.readUInt32LE(offset + 12),
+        byteRate: bytes.readUInt32LE(offset + 16),
+        blockAlign: bytes.readUInt16LE(offset + 20),
+        bitDepth: bytes.readUInt16LE(offset + 22),
+      }
+      if (chunk === 'data') dataSizes.push(chunkSize)
       offset = nextOffset
     }
-    return offset === bytes.length && hasFormat && hasData
+    if (!format || format.audioFormat !== 1 || !format.channels || !format.sampleRate || ![8, 16, 24, 32].includes(format.bitDepth)) return false
+    const expectedBlockAlign = format.channels * (format.bitDepth / 8)
+    if (format.blockAlign !== expectedBlockAlign || format.byteRate !== format.sampleRate * format.blockAlign) return false
+    return offset === bytes.length && dataSizes.length > 0 && dataSizes.every((size) => size > 0 && size % format.blockAlign === 0)
   } catch { return false }
 }
 
@@ -134,8 +144,10 @@ export async function prepareContent(options: PrepareContentOptions): Promise<vo
         const prior = await reusableSentence(contentRoot, id, sentence, cached.sentences[sentence.id - 1])
         if (prior) reusable.set(sentence.id, prior)
       }
+      let nextSentenceIndex = 0
       const passage = await preparePassage({ id, title, source, enrichSentence: async (sentence) => {
-        const sentenceId = expected.find((item) => item.english === sentence.english)?.id
+        const sentenceId = expected[nextSentenceIndex]?.id
+        nextSentenceIndex += 1
         const prior = sentenceId ? reusable.get(sentenceId) : undefined
         return prior ?? options.enrichSentence(sentence)
       } })

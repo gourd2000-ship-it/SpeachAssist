@@ -8,9 +8,9 @@ import { createRateLimitedSynthesizer, prepareContent, type PrepareContentOption
 
 const roots: string[] = []
 const wav = Buffer.from([
-  ...Buffer.from('RIFF'), 36, 0, 0, 0, ...Buffer.from('WAVEfmt '), 16, 0, 0, 0,
+  ...Buffer.from('RIFF'), 38, 0, 0, 0, ...Buffer.from('WAVEfmt '), 16, 0, 0, 0,
   1, 0, 1, 0, 0x44, 0xac, 0, 0, 0x88, 0x58, 1, 0, 2, 0, 16, 0,
-  ...Buffer.from('data'), 0, 0, 0, 0,
+  ...Buffer.from('data'), 2, 0, 0, 0, 0, 0,
 ])
 
 async function fixture() {
@@ -75,6 +75,24 @@ describe('prepareContent', () => {
   })
 
   it.each([
+    ['audio format', (bytes: Buffer) => bytes.writeUInt16LE(3, 20)],
+    ['channel count', (bytes: Buffer) => bytes.writeUInt16LE(0, 22)],
+    ['sample rate', (bytes: Buffer) => bytes.writeUInt32LE(0, 24)],
+    ['byte rate', (bytes: Buffer) => bytes.writeUInt32LE(1, 28)],
+    ['block alignment', (bytes: Buffer) => bytes.writeUInt16LE(1, 32)],
+    ['bit depth', (bytes: Buffer) => bytes.writeUInt16LE(12, 34)],
+    ['data alignment', (bytes: Buffer) => bytes.writeUInt32LE(1, 40)],
+  ])('rejects a sample WAV with invalid PCM %s without changing public content', async (_name, corrupt) => {
+    const root = await fixture()
+    const invalid = Buffer.from(wav)
+    corrupt(invalid)
+    await writeFile(join(root, 'public/content/sample/audio/sentences/001.wav'), invalid)
+    const before = await treeSnapshot(join(root, 'public/content'))
+    await expect(prepareContent(options(root))).rejects.toThrow('기존 sample 콘텐츠가 올바르지 않습니다')
+    expect(await treeSnapshot(join(root, 'public/content'))).toEqual(before)
+  })
+
+  it.each([
     ['id', 'wrong-id'],
     ['title', 'wrong-title'],
     ['title', 42],
@@ -110,6 +128,21 @@ describe('prepareContent', () => {
     expect(await sampleSnapshot(root)).toEqual(sampleBefore)
   })
 
+  it('reuses repeated English sentences by sequence number without mixing cached enrichment', async () => {
+    const root = await fixture()
+    await writeFile(join(root, 'doc/other.txt'), 'Repeat.\nRepeat.', 'utf8')
+    await mkdir(join(root, 'public/content/other/audio/sentences'), { recursive: true })
+    await writeFile(join(root, 'public/content/other/passage.json'), JSON.stringify({ id: 'other', title: 'other', sentences: [
+      { id: 1, english: 'Repeat.', translation: '첫 번역', pronunciation: '첫 발음', audioSrc: '/content/other/audio/sentences/001.wav' },
+      { id: 2, english: 'Repeat.', translation: '둘 번역', pronunciation: '둘 발음', audioSrc: '/content/other/audio/sentences/002.wav' },
+    ] }))
+    await writeFile(join(root, 'public/content/other/audio/sentences/001.wav'), wav)
+    await writeFile(join(root, 'public/content/other/audio/sentences/002.wav'), wav)
+    await prepareContent(options(root, { enrichSentence: async () => { throw new Error('should not enrich') }, synthesize: async () => { throw new Error('should not synthesize') } }))
+    const other = JSON.parse(await readFile(join(root, 'public/content/other/passage.json'), 'utf8'))
+    expect(other.sentences.map((sentence: { translation: string; pronunciation: string }) => [sentence.translation, sentence.pronunciation])).toEqual([['첫 번역', '첫 발음'], ['둘 번역', '둘 발음']])
+  })
+
   it('keeps sample file bytes unchanged even with forced regeneration', async () => {
     const root = await fixture()
     const before = await sampleSnapshot(root)
@@ -119,11 +152,11 @@ describe('prepareContent', () => {
 
   it('does not publish when enrichment or WAV generation fails, and leaves prior content intact', async () => {
     const root = await fixture()
-    const before = await readFile(join(root, 'public/content/index.json'))
+    const before = await treeSnapshot(join(root, 'public/content'))
     await expect(prepareContent(options(root, { enrichSentence: async () => { throw new Error('enrich failed') } }))).rejects.toThrow('enrich failed')
-    expect(await readFile(join(root, 'public/content/index.json'))).toEqual(before)
+    expect(await treeSnapshot(join(root, 'public/content'))).toEqual(before)
     await expect(prepareContent(options(root, { synthesize: async () => Buffer.from('bad') }))).rejects.toThrow(/WAV/)
-    expect(await readFile(join(root, 'public/content/index.json'))).toEqual(before)
+    expect(await treeSnapshot(join(root, 'public/content'))).toEqual(before)
   })
 
   it('rejects incomplete temporary content before publication', async () => {
@@ -142,8 +175,9 @@ describe('prepareContent', () => {
     ]
     for (const beforeValidate of corruptions) {
       const root = await fixture()
+      const before = await treeSnapshot(join(root, 'public/content'))
       await expect(prepareContent(options(root, { beforeValidate }))).rejects.toThrow(/임시/)
-      expect(JSON.parse(await readFile(join(root, 'public/content/index.json'), 'utf8')).passages).toEqual([{ id: 'sample', title: 'sample' }])
+      expect(await treeSnapshot(join(root, 'public/content'))).toEqual(before)
     }
   })
 
@@ -157,16 +191,16 @@ describe('prepareContent', () => {
 
   it('reports backup move failure without changing public content', async () => {
     const root = await fixture()
-    const before = await readFile(join(root, 'public/content/index.json'))
+    const before = await treeSnapshot(join(root, 'public/content'))
     await expect(prepareContent(options(root, { move: async (from, to) => { if (to.includes('.content-backup-')) throw new Error('backup move failed'); await rename(from, to) } }))).rejects.toThrow('backup move failed')
-    expect(await readFile(join(root, 'public/content/index.json'))).toEqual(before)
+    expect(await treeSnapshot(join(root, 'public/content'))).toEqual(before)
   })
 
   it('restores the backup if moving new public content fails', async () => {
     const root = await fixture()
-    const before = await readFile(join(root, 'public/content/index.json'))
+    const before = await treeSnapshot(join(root, 'public/content'))
     await expect(prepareContent(options(root, { move: async (from, to) => { if (from.includes('.content-stage-') && to.endsWith('public\\content')) throw new Error('publish move failed'); await rename(from, to) } }))).rejects.toThrow('publish move failed')
-    expect(await readFile(join(root, 'public/content/index.json'))).toEqual(before)
+    expect(await treeSnapshot(join(root, 'public/content'))).toEqual(before)
   })
 
   it('reports failed residual isolation and failed backup recovery with remaining locations', async () => {
