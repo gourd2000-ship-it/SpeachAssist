@@ -66,7 +66,7 @@ export default function App() {
         <p className="header-description">문장을 듣고, 낱말을 눌러 발음을 확인하세요.</p>
       </header>
 
-      <section className="control-panel" aria-label="읽기 설정">
+      <section className="control-panel controls-sticky" aria-label="읽기 설정">
         <div className="setting-field passage-field">
           <label htmlFor="passage-select">지문 선택</label>
           <select
