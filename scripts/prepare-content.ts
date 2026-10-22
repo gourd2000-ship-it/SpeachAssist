@@ -1,234 +1,248 @@
 import 'dotenv/config'
 
 import { GoogleGenAI } from '@google/genai'
-import { access, mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
-import { basename, dirname, extname, resolve } from 'node:path'
+import { access, cp, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
+import { basename, dirname, extname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import {
-  preparePassage,
-  type PreparedPassage,
-  type SentenceEnrichment,
-} from '../src/content/prepare.js'
+import { parsePassage } from '../src/content/parser.js'
+import { preparePassage, sentenceAudioPath, type PreparedPassage, type PreparedSentence, type SentenceEnrichment } from '../src/content/prepare.js'
 import { passageIdFromFilename } from '../src/content/passageId.js'
 
-const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const sourceDirectory = resolve(projectRoot, 'doc')
-const publicContentRoot = resolve(projectRoot, 'public/content')
-const indexPath = resolve(projectRoot, 'public/content/index.json')
-const force = process.argv.includes('--force')
+type CachedSentence = Pick<PreparedSentence, 'english' | 'translation' | 'pronunciation' | 'audioSrc'>
+type CachedPassage = { id: string; title: string; sentences: CachedSentence[] }
+type PassageList = { passages: Array<{ id: string; title: string }> }
 
-const textModel = 'gemini-3.8-flash'
-const speechModel = 'gemini-3.8-flash-tts'
-const voice = 'Kore'
-const minimumRequestIntervalMs = 6_500
+export type PrepareContentOptions = {
+  projectRoot: string
+  force?: boolean
+  enrichSentence: (sentence: { english: string; translation: string | null }) => Promise<SentenceEnrichment>
+  synthesize: (sentence: { english: string; label: string }) => Promise<Buffer>
+  log?: (message: string) => void
+  move?: (from: string, to: string) => Promise<void>
+  remove?: (path: string) => Promise<void>
+  uniqueName?: (kind: 'content-stage' | 'content-backup' | 'content-residual', attempt: number) => string
+  beforeValidate?: (stageRoot: string) => Promise<void> | void
+}
 
-type CachedSentence = {
-  english: string
-  translation: string
-  pronunciation: string
+const exists = async (path: string) => access(path).then(() => true, () => false)
+const isWave = async (path: string) => {
+  try {
+    const bytes = await readFile(path)
+    if (bytes.length < 20 || !bytes.subarray(0, 4).equals(Buffer.from('RIFF')) || !bytes.subarray(8, 12).equals(Buffer.from('WAVE')) || bytes.readUInt32LE(4) !== bytes.length - 8) return false
+    let offset = 12
+    let format: { audioFormat: number; channels: number; sampleRate: number; byteRate: number; blockAlign: number; bitDepth: number } | null = null
+    const dataSizes: number[] = []
+    while (offset < bytes.length) {
+      if (offset + 8 > bytes.length) return false
+      const chunkSize = bytes.readUInt32LE(offset + 4)
+      const nextOffset = offset + 8 + chunkSize + (chunkSize % 2)
+      if (nextOffset > bytes.length) return false
+      const chunk = bytes.subarray(offset, offset + 4).toString('ascii')
+      if (chunk === 'fmt ' && chunkSize >= 16) format = {
+        audioFormat: bytes.readUInt16LE(offset + 8),
+        channels: bytes.readUInt16LE(offset + 10),
+        sampleRate: bytes.readUInt32LE(offset + 12),
+        byteRate: bytes.readUInt32LE(offset + 16),
+        blockAlign: bytes.readUInt16LE(offset + 20),
+        bitDepth: bytes.readUInt16LE(offset + 22),
+      }
+      if (chunk === 'data') dataSizes.push(chunkSize)
+      offset = nextOffset
+    }
+    if (!format || format.audioFormat !== 1 || !format.channels || !format.sampleRate || ![8, 16, 24, 32].includes(format.bitDepth)) return false
+    const expectedBlockAlign = format.channels * (format.bitDepth / 8)
+    if (format.blockAlign !== expectedBlockAlign || format.byteRate !== format.sampleRate * format.blockAlign) return false
+    return offset === bytes.length && dataSizes.length > 0 && dataSizes.every((size) => size > 0 && size % format.blockAlign === 0)
+  } catch { return false }
 }
 
 function extractJson(text: string): SentenceEnrichment {
-  const json = text.trim().replace(/^```json\s*|\s*```$/g, '')
-  const parsed: unknown = JSON.parse(json)
+  const parsed: unknown = JSON.parse(text.trim().replace(/^```json\s*|\s*```$/g, ''))
+  if (!parsed || typeof parsed !== 'object' || typeof (parsed as { translation?: unknown }).translation !== 'string' || typeof (parsed as { pronunciation?: unknown }).pronunciation !== 'string') throw new Error('Gemini 보강 응답 형식이 올바르지 않습니다')
+  return parsed as SentenceEnrichment
+}
 
-  if (
-    typeof parsed !== 'object' ||
-    parsed === null ||
-    typeof (parsed as { translation?: unknown }).translation !== 'string' ||
-    typeof (parsed as { pronunciation?: unknown }).pronunciation !== 'string'
-  ) {
-    throw new Error('Gemini 보강 응답 형식이 올바르지 않습니다')
+async function readJson<T>(path: string): Promise<T | null> { try { return JSON.parse(await readFile(path, 'utf8')) as T } catch { return null } }
+
+async function privatePath(root: string, kind: 'content-stage' | 'content-backup' | 'content-residual', uniqueName: NonNullable<PrepareContentOptions['uniqueName']>) {
+  for (let attempt = 1; attempt < 10_000; attempt += 1) {
+    const path = resolve(root, uniqueName(kind, attempt))
+    if (relative(root, path).startsWith('..')) throw new Error('비공개 콘텐츠 경로가 프로젝트 루트를 벗어났습니다')
+    if (!(await exists(path))) return path
   }
+  throw new Error(`고유한 ${kind} 경로를 만들 수 없습니다`)
+}
 
-  return {
-    translation: (parsed as { translation: string }).translation,
-    pronunciation: (parsed as { pronunciation: string }).pronunciation,
+function sourceSentences(id: string, source: string) { return parsePassage(source).sentences.map((sentence) => ({ ...sentence, audioSrc: sentenceAudioPath(id, sentence.id) })) }
+async function cacheFor(contentRoot: string, id: string) { return readJson<CachedPassage>(join(contentRoot, id, 'passage.json')) }
+
+async function reusableSentence(contentRoot: string, id: string, expected: ReturnType<typeof sourceSentences>[number], cached: CachedSentence | undefined) {
+  if (!cached || cached.english !== expected.english || !cached.translation.trim() || !cached.pronunciation.trim() || cached.audioSrc !== expected.audioSrc) return null
+  const audioPath = resolve(contentRoot, id, 'audio', 'sentences', `${String(expected.id).padStart(3, '0')}.wav`)
+  return (await isWave(audioPath)) ? cached : null
+}
+
+async function validateTree(root: string, expected: PreparedPassage[]) {
+  const index = await readJson<PassageList>(join(root, 'index.json'))
+  if (!index || !Array.isArray(index.passages) || JSON.stringify(index.passages) !== JSON.stringify(expected.map(({ id, title }) => ({ id, title })))) throw new Error('임시 콘텐츠 목록이 올바르지 않습니다')
+  for (const passage of expected) {
+    const actual = await readJson<PreparedPassage>(join(root, passage.id, 'passage.json'))
+    if (!actual || actual.id !== passage.id || actual.title !== passage.title || !Array.isArray(actual.sentences) || actual.sentences.length !== passage.sentences.length) throw new Error(`임시 지문 JSON이 올바르지 않습니다: ${passage.id}`)
+    for (const [offset, expectedSentenceData] of passage.sentences.entries()) {
+      const sentence = actual.sentences[offset]
+      if (!sentence || sentence.id !== offset + 1 || sentence.english !== expectedSentenceData.english || !sentence.translation.trim() || !sentence.pronunciation.trim() || sentence.audioSrc !== sentenceAudioPath(passage.id, offset + 1)) throw new Error(`임시 문장 데이터가 올바르지 않습니다: ${passage.id}/${offset + 1}`)
+      if (!(await isWave(join(root, passage.id, 'audio', 'sentences', `${String(offset + 1).padStart(3, '0')}.wav`)))) throw new Error(`임시 WAV가 올바르지 않습니다: ${passage.id}/${offset + 1}`)
+    }
   }
 }
 
-async function pathExists(path: string): Promise<boolean> {
+async function validateExistingSample(contentRoot: string, title: string, source: string) {
+  const cached = await cacheFor(contentRoot, 'sample')
+  if (!cached || cached.id !== 'sample' || cached.title !== title) throw new Error('기존 sample 콘텐츠가 올바르지 않습니다')
+  const expected = sourceSentences('sample', source)
+  if (cached.sentences.length !== expected.length) throw new Error('기존 sample 문장 수가 올바르지 않습니다')
+  for (const [index, sentence] of expected.entries()) {
+    const prior = await reusableSentence(contentRoot, 'sample', sentence, cached.sentences[index])
+    if (!prior || (sentence.translation && prior.translation !== sentence.translation)) throw new Error('기존 sample 콘텐츠가 올바르지 않습니다')
+  }
+}
+
+const combinedError = (message: string, errors: unknown[]) => new Error([message, ...errors.map((error) => error instanceof Error ? error.message : String(error))].join('\n'))
+
+export async function prepareContent(options: PrepareContentOptions): Promise<void> {
+  const root = resolve(options.projectRoot)
+  const contentRoot = join(root, 'public', 'content')
+  const sourceRoot = join(root, 'doc')
+  const move = options.move ?? rename
+  const remove = options.remove ?? ((path: string) => rm(path, { recursive: true, force: true }))
+  const uniqueName = options.uniqueName ?? ((kind, attempt) => `.${kind}-${process.pid}-${Date.now()}-${attempt}`)
+  const stageRoot = await privatePath(root, 'content-stage', uniqueName)
+  let stageCreated = false
+  let published = false
   try {
-    await access(path)
-    return true
-  } catch {
-    return false
+    const filenames = (await readdir(sourceRoot)).filter((name) => extname(name).toLowerCase() === '.txt').sort((a, b) => a.localeCompare(b, 'ko'))
+    if (!filenames.length) throw new Error('doc 폴더에 준비할 .txt 지문이 없습니다.')
+    await mkdir(stageRoot); stageCreated = true
+    const sources = await Promise.all(filenames.map(async (filename) => ({ filename, source: await readFile(join(sourceRoot, filename), 'utf8') })))
+    const sampleSource = sources.find(({ filename }) => passageIdFromFilename(filename) === 'sample')
+    if (sampleSource && !(await exists(join(contentRoot, 'sample')))) throw new Error('기존 sample 콘텐츠가 없습니다')
+    if (sampleSource) { await validateExistingSample(contentRoot, basename(sampleSource.filename, extname(sampleSource.filename)), sampleSource.source); await cp(join(contentRoot, 'sample'), join(stageRoot, 'sample'), { recursive: true, force: false, errorOnExist: true }) }
+    const passages: PreparedPassage[] = []
+    for (const { filename, source } of sources) {
+      const id = passageIdFromFilename(filename)
+      const title = basename(filename, extname(filename))
+      if (id === 'sample') {
+        const sample = await readJson<PreparedPassage>(join(stageRoot, id, 'passage.json'))
+        if (!sample) throw new Error('기존 sample 콘텐츠가 올바르지 않습니다')
+        passages.push(sample); continue
+      }
+      const expected = sourceSentences(id, source)
+      const cached = options.force ? null : await cacheFor(contentRoot, id)
+      const reusable = new Map<number, CachedSentence>()
+      if (cached?.id === id && cached.title === title) for (const sentence of expected) {
+        const prior = await reusableSentence(contentRoot, id, sentence, cached.sentences[sentence.id - 1])
+        if (prior) reusable.set(sentence.id, prior)
+      }
+      let nextSentenceIndex = 0
+      const passage = await preparePassage({ id, title, source, enrichSentence: async (sentence) => {
+        const sentenceId = expected[nextSentenceIndex]?.id
+        nextSentenceIndex += 1
+        const prior = sentenceId ? reusable.get(sentenceId) : undefined
+        return prior ?? options.enrichSentence(sentence)
+      } })
+      const passageRoot = join(stageRoot, id)
+      await mkdir(join(passageRoot, 'audio', 'sentences'), { recursive: true })
+      await writeFile(join(passageRoot, 'passage.json'), `${JSON.stringify(passage, null, 2)}\n`, 'utf8')
+      for (const sentence of passage.sentences) {
+        const output = join(passageRoot, 'audio', 'sentences', `${String(sentence.id).padStart(3, '0')}.wav`)
+        const sourceAudio = join(contentRoot, id, 'audio', 'sentences', `${String(sentence.id).padStart(3, '0')}.wav`)
+        if (reusable.has(sentence.id) && !options.force) await cp(sourceAudio, output, { force: false, errorOnExist: true })
+        else {
+          const bytes = await options.synthesize({ english: sentence.english, label: `${title} sentence ${sentence.id}` })
+          if (!bytes.subarray(0, 4).equals(Buffer.from('RIFF')) || !bytes.subarray(8, 12).equals(Buffer.from('WAVE'))) throw new Error(`WAV 생성 결과가 올바르지 않습니다: ${title} sentence ${sentence.id}`)
+          await writeFile(output, bytes)
+        }
+      }
+      passages.push(passage)
+    }
+    await writeFile(join(stageRoot, 'index.json'), `${JSON.stringify({ passages: passages.map(({ id, title }) => ({ id, title })) }, null, 2)}\n`, 'utf8')
+    await options.beforeValidate?.(stageRoot)
+    await validateTree(stageRoot, passages)
+    const backupRoot = await privatePath(root, 'content-backup', uniqueName)
+    if (await exists(contentRoot)) { try { await move(contentRoot, backupRoot) } catch (error) { throw combinedError('기존 공개 콘텐츠를 백업하지 못했습니다', [error]) } }
+    try { await move(stageRoot, contentRoot); stageCreated = false; published = true } catch (publishError) {
+      const recoveryErrors: unknown[] = []
+      let residualRoot: string | null = null
+      if (await exists(contentRoot)) {
+        residualRoot = await privatePath(root, 'content-residual', uniqueName)
+        try { await move(contentRoot, residualRoot) } catch (error) { recoveryErrors.push(new Error(`잔존 공개 콘텐츠 격리 실패 (${contentRoot}): ${error instanceof Error ? error.message : String(error)}`)) }
+      }
+      if (await exists(backupRoot)) try { await move(backupRoot, contentRoot) } catch (error) { recoveryErrors.push(new Error(`백업 복구 실패 (${backupRoot} -> ${contentRoot}): ${error instanceof Error ? error.message : String(error)}`)) }
+      if (residualRoot && await exists(residualRoot)) try { await remove(residualRoot) } catch (error) { recoveryErrors.push(new Error(`잔존 콘텐츠 정리 실패 (${residualRoot}): ${error instanceof Error ? error.message : String(error)}`)) }
+      throw combinedError(`새 공개 콘텐츠 이동 실패: ${publishError instanceof Error ? publishError.message : String(publishError)}`, recoveryErrors)
+    }
+    if (await exists(backupRoot)) try { await remove(backupRoot) } catch (error) { throw combinedError(`새 공개 콘텐츠는 유지되었지만 백업 정리 실패 (${backupRoot})`, [error]) }
+    options.log?.('콘텐츠 준비 완료')
+  } catch (error) {
+    const cleanupErrors: unknown[] = []
+    if (stageCreated && !published && await exists(stageRoot)) try { await remove(stageRoot) } catch (cleanupError) { cleanupErrors.push(new Error(`임시 콘텐츠 정리 실패 (${stageRoot}): ${cleanupError instanceof Error ? cleanupError.message : String(cleanupError)}`)) }
+    if (cleanupErrors.length) throw combinedError(error instanceof Error ? error.message : String(error), cleanupErrors)
+    throw error
   }
 }
 
-async function readCachedPassage(passagePath: string): Promise<Map<string, CachedSentence>> {
-  if (!(await pathExists(passagePath))) return new Map()
+const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const sleep = (milliseconds: number) => new Promise<void>((done) => setTimeout(done, milliseconds))
+const retryDelay = (error: unknown) => { const seconds = /retry in (\d+)s/i.exec(error instanceof Error ? error.message : String(error))?.[1]; return seconds ? (Number(seconds) + 1) * 1_000 : null }
 
-  const cached = JSON.parse(await readFile(passagePath, 'utf8')) as PreparedPassage
-  return new Map(cached.sentences.map((sentence) => [sentence.english, sentence]))
-}
+type SpeechJob = { english: string; label: string }
 
-function audioFilePath(audioSrc: string): string {
-  return resolve(projectRoot, 'public', `.${audioSrc}`)
-}
-
-const sleep = (milliseconds: number) => new Promise((resolveSleep) => setTimeout(resolveSleep, milliseconds))
-
-function retryDelay(error: unknown): number | null {
-  const message = error instanceof Error ? error.message : String(error)
-  const seconds = /retry in (\d+)s/i.exec(message)?.[1]
-  if (!seconds) return null
-  return (Number(seconds) + 1) * 1_000
+export function createRateLimitedSynthesizer({
+  request,
+  now = Date.now,
+  sleep: wait = sleep,
+  intervalMs = 6_500,
+  onRetry,
+}: {
+  request: (job: SpeechJob) => Promise<Buffer>
+  now?: () => number
+  sleep?: (milliseconds: number) => Promise<void>
+  intervalMs?: number
+  onRetry?: (milliseconds: number) => void
+}) {
+  let nextRequestTime = 0
+  return async (job: SpeechJob) => {
+    const waitTime = Math.max(0, nextRequestTime - now())
+    if (waitTime) await wait(waitTime)
+    nextRequestTime = now() + intervalMs
+    for (;;) {
+      try { return await request(job) } catch (error) {
+        const delay = retryDelay(error)
+        if (delay === null) throw error
+        onRetry?.(delay)
+        await wait(delay)
+        nextRequestTime = now() + intervalMs
+      }
+    }
+  }
 }
 
 async function main() {
-  if (!process.env.GEMINI_API_KEY) {
-    throw new Error('GEMINI_API_KEY를 .env에 설정한 뒤 다시 실행하세요.')
-  }
-
+  if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY를 .env에 설정한 뒤 다시 실행하세요.')
   const client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
-  const sourceFiles = (await readdir(sourceDirectory))
-    .filter((filename) => extname(filename).toLocaleLowerCase('en-US') === '.txt')
-    .sort((first, second) => first.localeCompare(second, 'ko'))
-
-  if (!sourceFiles.length) {
-    throw new Error('doc 폴더에 준비할 .txt 지문이 없습니다.')
-  }
-
-  let enrichedCount = 0
-  const passages: PreparedPassage[] = []
-
-  for (const filename of sourceFiles) {
-    const id = passageIdFromFilename(filename)
-    const title = basename(filename, extname(filename))
-    const sourcePath = resolve(sourceDirectory, filename)
-    const contentRoot = resolve(publicContentRoot, id)
-    const passagePath = resolve(contentRoot, 'passage.json')
-    const [source, cached] = await Promise.all([readFile(sourcePath, 'utf8'), readCachedPassage(passagePath)])
-
-    const passage = await preparePassage({
-      id,
-      title,
-      source,
-      enrichSentence: async ({ english }) => {
-        const prior = cached.get(english)
-        if (!force && prior?.translation && prior.pronunciation) {
-          return prior
-        }
-
-        enrichedCount += 1
-        console.log(`[text ${enrichedCount}] ${english}`)
-        const response = await client.interactions.create({
-          model: textModel,
-          system_instruction: [
-            'You prepare Korean study data for English learners.',
-            'Return only a JSON object with exactly translation and pronunciation string fields.',
-            'translation must be a natural Korean translation.',
-            'pronunciation must be Korean Hangul that represents how the English sentence sounds, not a translation.',
-            'Do not include Markdown, explanations, or English words in pronunciation.',
-          ].join(' '),
-          input: `English sentence: ${JSON.stringify(english)}`,
-        })
-
-        if (!response.output_text) {
-          throw new Error(`보강 텍스트를 받지 못했습니다: ${english}`)
-        }
-
-        return extractJson(response.output_text)
-      },
-    })
-
-    await mkdir(contentRoot, { recursive: true })
-    await writeFile(passagePath, `${JSON.stringify(passage, null, 2)}\n`, 'utf8')
-    passages.push(passage)
-  }
-
-  await writeFile(
-    indexPath,
-    `${JSON.stringify(
-      { passages: passages.map(({ id, title }) => ({ id, title })) },
-      null,
-      2,
-    )}\n`,
-    'utf8',
-  )
-
-  const audioJobs = passages.flatMap((passage) => [
-    ...passage.sentences.map((sentence) => ({
-      label: `${passage.title} sentence ${sentence.id}`,
-      text: sentence.english,
-      audioSrc: sentence.audioSrc,
-    })),
-  ])
-
-  const pendingJobs = [] as typeof audioJobs
-  for (const job of audioJobs) {
-    if (force || !(await pathExists(audioFilePath(job.audioSrc)))) pendingJobs.push(job)
-  }
-
-  let createdAudioCount = 0
-  let nextRequestTime = 0
-
-  async function requestAudio(job: (typeof audioJobs)[number]) {
-    const waitTime = Math.max(0, nextRequestTime - Date.now())
-    if (waitTime) await sleep(waitTime)
-    nextRequestTime = Date.now() + minimumRequestIntervalMs
-
-    for (;;) {
-      try {
-        return await client.interactions.create({
-          model: speechModel,
-          input: [
-            {
-              type: 'user_input',
-              content: [
-                {
-                  type: 'text',
-                  text: job.text,
-                  annotations: [
-                    {
-                      type: 'speech_metadata',
-                      style: 'Read naturally and clearly for an English learner.',
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-          response_format: { type: 'audio' },
-          generation_config: {
-            speech_config: [{ voice }],
-          },
-        })
-      } catch (error) {
-        const delay = retryDelay(error)
-        if (delay === null) throw error
-        console.warn(`요청 한도 도달: ${Math.ceil(delay / 1_000)}초 후 재시도합니다.`)
-        await sleep(delay)
-        nextRequestTime = Date.now() + minimumRequestIntervalMs
-      }
-    }
-  }
-
-  async function createAudioWorker() {
-    for (const job of pendingJobs) {
-      const outputPath = audioFilePath(job.audioSrc)
-
-      await mkdir(dirname(outputPath), { recursive: true })
-      createdAudioCount += 1
-      console.log(`[audio ${createdAudioCount}/${pendingJobs.length}] ${job.label}`)
-      const response = await requestAudio(job)
-
-      if (!response.output_audio?.data) {
-        throw new Error(`음성 데이터를 받지 못했습니다: ${job.label}`)
-      }
-
-      await writeFile(outputPath, Buffer.from(response.output_audio.data, 'base64'))
-    }
-  }
-
-  await createAudioWorker()
-
-  console.log(`완료: 텍스트 보강 ${enrichedCount}개, 새 음성 ${createdAudioCount}개`)
+  const synthesize = createRateLimitedSynthesizer({
+    request: async ({ english, label }) => {
+      const response = await client.interactions.create({ model: 'gemini-3.8-flash-tts', input: [{ type: 'user_input', content: [{ type: 'text', text: english, annotations: [{ type: 'speech_metadata', style: 'Read naturally and clearly for an English learner.' }] }] }], response_format: { type: 'audio' }, generation_config: { speech_config: [{ voice: 'Kore' }] } })
+      if (!response.output_audio?.data) throw new Error(`음성 데이터를 받지 못했습니다: ${label}`)
+      return Buffer.from(response.output_audio.data, 'base64')
+    },
+    onRetry: (milliseconds) => console.warn(`요청 한도 도달: ${Math.ceil(milliseconds / 1000)}초 후 재시도합니다.`),
+  })
+  await prepareContent({ projectRoot, force: process.argv.includes('--force'), log: console.log,
+    enrichSentence: async ({ english }) => { const response = await client.interactions.create({ model: 'gemini-3.8-flash', system_instruction: 'You prepare Korean study data for English learners. Return only a JSON object with exactly translation and pronunciation string fields. translation must be a natural Korean translation. pronunciation must be Korean Hangul that represents how the English sentence sounds, not a translation. Do not include Markdown, explanations, or English words in pronunciation.', input: `English sentence: ${JSON.stringify(english)}` }); if (!response.output_text) throw new Error(`보강 텍스트를 받지 못했습니다: ${english}`); return extractJson(response.output_text) },
+    synthesize,
+  })
 }
 
-main().catch((error: unknown) => {
-  console.error(error)
-  process.exitCode = 1
-})
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main().catch((error: unknown) => { console.error(error); process.exitCode = 1 })

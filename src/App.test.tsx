@@ -32,6 +32,7 @@ describe('App', () => {
     render(<App />)
 
     expect(await screen.findByRole('heading', { name: '영어 읽기 도우미' })).toBeInTheDocument()
+    expect(screen.getByLabelText('재생 제어').closest('.control-panel')).toHaveClass('controls-sticky')
     expect(await screen.findByRole('button', { name: 'Hello 단어 읽기' })).toBeInTheDocument()
     expect(screen.getByLabelText('지문 선택')).toHaveValue('sample')
     expect(fetch).toHaveBeenCalledWith('/content/index.json')
