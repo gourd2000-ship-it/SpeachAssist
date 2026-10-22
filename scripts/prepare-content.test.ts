@@ -1,13 +1,17 @@
-import { mkdtemp, mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
+import { mkdtemp, mkdir, readFile, readdir, rename, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { prepareContent, type PrepareContentOptions } from './prepare-content.js'
+import { createRateLimitedSynthesizer, prepareContent, type PrepareContentOptions } from './prepare-content.js'
 
 const roots: string[] = []
-const wav = Buffer.from('RIFF\x24\x00\x00\x00WAVEfmt ')
+const wav = Buffer.from([
+  ...Buffer.from('RIFF'), 36, 0, 0, 0, ...Buffer.from('WAVEfmt '), 16, 0, 0, 0,
+  1, 0, 1, 0, 0x44, 0xac, 0, 0, 0x88, 0x58, 1, 0, 2, 0, 16, 0,
+  ...Buffer.from('data'), 0, 0, 0, 0,
+])
 
 async function fixture() {
   const root = await mkdtemp(join(tmpdir(), 'prepare-content-'))
@@ -41,6 +45,16 @@ async function sampleSnapshot(root: string) {
   return Object.fromEntries(await Promise.all(files.map(async (file) => [file, await readFile(join(root, 'public/content/sample', file))])))
 }
 
+async function treeSnapshot(root: string, relative = ''): Promise<Record<string, Buffer>> {
+  const directory = join(root, relative)
+  const entries = await readdir(directory, { withFileTypes: true })
+  const snapshots = await Promise.all(entries.flatMap(async (entry) => {
+    const path = join(relative, entry.name)
+    return entry.isDirectory() ? Object.entries(await treeSnapshot(root, path)) : [[path, await readFile(join(root, path))] as const]
+  }))
+  return Object.fromEntries(snapshots.flat())
+}
+
 afterEach(async () => { await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true }))) })
 
 describe('prepareContent', () => {
@@ -54,7 +68,22 @@ describe('prepareContent', () => {
 
   it('refuses to publish when the existing sample is invalid', async () => {
     const root = await fixture()
-    await writeFile(join(root, 'public/content/sample/audio/sentences/001.wav'), 'not a wav')
+    await writeFile(join(root, 'public/content/sample/audio/sentences/001.wav'), Buffer.concat([wav.subarray(0, 12), Buffer.from('fmt ')]))
+    const before = await treeSnapshot(join(root, 'public/content'))
+    await expect(prepareContent(options(root))).rejects.toThrow('기존 sample 콘텐츠가 올바르지 않습니다')
+    expect(await treeSnapshot(join(root, 'public/content'))).toEqual(before)
+  })
+
+  it.each([
+    ['id', 'wrong-id'],
+    ['title', 'wrong-title'],
+    ['title', 42],
+  ])('rejects a sample cache with an invalid %s', async (field, value) => {
+    const root = await fixture()
+    const path = join(root, 'public/content/sample/passage.json')
+    const content = JSON.parse(await readFile(path, 'utf8'))
+    content[field] = value
+    await writeFile(path, JSON.stringify(content))
     await expect(prepareContent(options(root))).rejects.toThrow('기존 sample 콘텐츠가 올바르지 않습니다')
   })
 
@@ -159,5 +188,24 @@ describe('prepareContent', () => {
   it('includes the remaining staging location when cleanup after an earlier failure fails', async () => {
     const root = await fixture()
     await expect(prepareContent(options(root, { enrichSentence: async () => { throw new Error('enrichment failed') }, remove: async (target) => { throw new Error(`cannot remove ${target}`) } }))).rejects.toThrow(/enrichment failed[\s\S]*임시 콘텐츠 정리 실패/)
+  })
+
+  it('resets the request interval after a retry delay', async () => {
+    const sleeps: number[] = []
+    let requestCount = 0
+    const now = [0, 0, 1_000, 1_000]
+    const synthesize = createRateLimitedSynthesizer({
+      request: async () => {
+        requestCount += 1
+        if (requestCount === 1) throw new Error('retry in 0s')
+        return wav
+      },
+      now: () => now.shift() ?? 1_000,
+      sleep: async (milliseconds) => { sleeps.push(milliseconds) },
+      intervalMs: 6_500,
+    })
+    await synthesize({ english: 'First.', label: 'first' })
+    await synthesize({ english: 'Second.', label: 'second' })
+    expect(sleeps).toEqual([1_000, 6_500])
   })
 })

@@ -29,7 +29,21 @@ const exists = async (path: string) => access(path).then(() => true, () => false
 const isWave = async (path: string) => {
   try {
     const bytes = await readFile(path)
-    return bytes.length >= 12 && bytes.subarray(0, 4).equals(Buffer.from('RIFF')) && bytes.subarray(8, 12).equals(Buffer.from('WAVE'))
+    if (bytes.length < 20 || !bytes.subarray(0, 4).equals(Buffer.from('RIFF')) || !bytes.subarray(8, 12).equals(Buffer.from('WAVE')) || bytes.readUInt32LE(4) !== bytes.length - 8) return false
+    let offset = 12
+    let hasFormat = false
+    let hasData = false
+    while (offset < bytes.length) {
+      if (offset + 8 > bytes.length) return false
+      const chunkSize = bytes.readUInt32LE(offset + 4)
+      const nextOffset = offset + 8 + chunkSize + (chunkSize % 2)
+      if (nextOffset > bytes.length) return false
+      const chunk = bytes.subarray(offset, offset + 4).toString('ascii')
+      if (chunk === 'fmt ') hasFormat = chunkSize >= 16
+      if (chunk === 'data') hasData = true
+      offset = nextOffset
+    }
+    return offset === bytes.length && hasFormat && hasData
   } catch { return false }
 }
 
@@ -73,9 +87,9 @@ async function validateTree(root: string, expected: PreparedPassage[]) {
   }
 }
 
-async function validateExistingSample(contentRoot: string, source: string) {
+async function validateExistingSample(contentRoot: string, title: string, source: string) {
   const cached = await cacheFor(contentRoot, 'sample')
-  if (!cached || cached.id !== 'sample') throw new Error('기존 sample 콘텐츠가 올바르지 않습니다')
+  if (!cached || cached.id !== 'sample' || cached.title !== title) throw new Error('기존 sample 콘텐츠가 올바르지 않습니다')
   const expected = sourceSentences('sample', source)
   if (cached.sentences.length !== expected.length) throw new Error('기존 sample 문장 수가 올바르지 않습니다')
   for (const [index, sentence] of expected.entries()) {
@@ -103,7 +117,7 @@ export async function prepareContent(options: PrepareContentOptions): Promise<vo
     const sources = await Promise.all(filenames.map(async (filename) => ({ filename, source: await readFile(join(sourceRoot, filename), 'utf8') })))
     const sampleSource = sources.find(({ filename }) => passageIdFromFilename(filename) === 'sample')
     if (sampleSource && !(await exists(join(contentRoot, 'sample')))) throw new Error('기존 sample 콘텐츠가 없습니다')
-    if (sampleSource) { await validateExistingSample(contentRoot, sampleSource.source); await cp(join(contentRoot, 'sample'), join(stageRoot, 'sample'), { recursive: true, force: false, errorOnExist: true }) }
+    if (sampleSource) { await validateExistingSample(contentRoot, basename(sampleSource.filename, extname(sampleSource.filename)), sampleSource.source); await cp(join(contentRoot, 'sample'), join(stageRoot, 'sample'), { recursive: true, force: false, errorOnExist: true }) }
     const passages: PreparedPassage[] = []
     for (const { filename, source } of sources) {
       const id = passageIdFromFilename(filename)
@@ -167,15 +181,55 @@ export async function prepareContent(options: PrepareContentOptions): Promise<vo
 }
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const sleep = (milliseconds: number) => new Promise((done) => setTimeout(done, milliseconds))
+const sleep = (milliseconds: number) => new Promise<void>((done) => setTimeout(done, milliseconds))
 const retryDelay = (error: unknown) => { const seconds = /retry in (\d+)s/i.exec(error instanceof Error ? error.message : String(error))?.[1]; return seconds ? (Number(seconds) + 1) * 1_000 : null }
+
+type SpeechJob = { english: string; label: string }
+
+export function createRateLimitedSynthesizer({
+  request,
+  now = Date.now,
+  sleep: wait = sleep,
+  intervalMs = 6_500,
+  onRetry,
+}: {
+  request: (job: SpeechJob) => Promise<Buffer>
+  now?: () => number
+  sleep?: (milliseconds: number) => Promise<void>
+  intervalMs?: number
+  onRetry?: (milliseconds: number) => void
+}) {
+  let nextRequestTime = 0
+  return async (job: SpeechJob) => {
+    const waitTime = Math.max(0, nextRequestTime - now())
+    if (waitTime) await wait(waitTime)
+    nextRequestTime = now() + intervalMs
+    for (;;) {
+      try { return await request(job) } catch (error) {
+        const delay = retryDelay(error)
+        if (delay === null) throw error
+        onRetry?.(delay)
+        await wait(delay)
+        nextRequestTime = now() + intervalMs
+      }
+    }
+  }
+}
 
 async function main() {
   if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY를 .env에 설정한 뒤 다시 실행하세요.')
-  const client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }); let nextRequestTime = 0
+  const client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
+  const synthesize = createRateLimitedSynthesizer({
+    request: async ({ english, label }) => {
+      const response = await client.interactions.create({ model: 'gemini-3.8-flash-tts', input: [{ type: 'user_input', content: [{ type: 'text', text: english, annotations: [{ type: 'speech_metadata', style: 'Read naturally and clearly for an English learner.' }] }] }], response_format: { type: 'audio' }, generation_config: { speech_config: [{ voice: 'Kore' }] } })
+      if (!response.output_audio?.data) throw new Error(`음성 데이터를 받지 못했습니다: ${label}`)
+      return Buffer.from(response.output_audio.data, 'base64')
+    },
+    onRetry: (milliseconds) => console.warn(`요청 한도 도달: ${Math.ceil(milliseconds / 1000)}초 후 재시도합니다.`),
+  })
   await prepareContent({ projectRoot, force: process.argv.includes('--force'), log: console.log,
-    enrichSentence: async ({ english }) => { const response = await client.interactions.create({ model: 'gemini-3.8-flash', system_instruction: 'Return only a JSON object with translation and pronunciation Korean string fields.', input: `English sentence: ${JSON.stringify(english)}` }); if (!response.output_text) throw new Error(`보강 텍스트를 받지 못했습니다: ${english}`); return extractJson(response.output_text) },
-    synthesize: async ({ english, label }) => { for (;;) { const wait = Math.max(0, nextRequestTime - Date.now()); if (wait) await sleep(wait); nextRequestTime = Date.now() + 6_500; try { const response = await client.interactions.create({ model: 'gemini-3.8-flash-tts', input: [{ type: 'user_input', content: [{ type: 'text', text: english, annotations: [{ type: 'speech_metadata', style: 'Read naturally and clearly for an English learner.' }] }] }], response_format: { type: 'audio' }, generation_config: { speech_config: [{ voice: 'Kore' }] } }); if (!response.output_audio?.data) throw new Error(`음성 데이터를 받지 못했습니다: ${label}`); return Buffer.from(response.output_audio.data, 'base64') } catch (error) { const delay = retryDelay(error); if (delay === null) throw error; console.warn(`요청 한도 도달: ${Math.ceil(delay / 1000)}초 후 재시도합니다.`); await sleep(delay) } } },
+    enrichSentence: async ({ english }) => { const response = await client.interactions.create({ model: 'gemini-3.8-flash', system_instruction: 'You prepare Korean study data for English learners. Return only a JSON object with exactly translation and pronunciation string fields. translation must be a natural Korean translation. pronunciation must be Korean Hangul that represents how the English sentence sounds, not a translation. Do not include Markdown, explanations, or English words in pronunciation.', input: `English sentence: ${JSON.stringify(english)}` }); if (!response.output_text) throw new Error(`보강 텍스트를 받지 못했습니다: ${english}`); return extractJson(response.output_text) },
+    synthesize,
   })
 }
 
