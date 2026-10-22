@@ -4,4 +4,6 @@ Gemini Interactions API의 단일 화자 TTS는 `generation_config.speech_config
 
 Vite의 브라우저 TypeScript 설정과 Node 스크립트 설정은 모듈 해석 규칙이 다르다. `scripts/`가 import하는 TypeScript 모듈은 NodeNext 규칙에 맞춰 상대 import에 `.js` 확장자를 써야 하며, 브라우저 테스트 import는 Vite 번들 해석을 사용한다. 생성기를 수정하면 별도 스크립트 타입 검사를 실행한다.
 
+콘텐츠 준비는 공개 `public/content/`를 직접 갱신하지 않는다. 전체 결과를 같은 볼륨의 임시 위치에서 검증한 뒤 디렉터리 이름 변경으로 교체한다. 생성·검사·교체가 실패하면 기존 공개 자료를 유지하며, `sample`은 재생성하지 않고 검증된 파일을 그대로 보존한다.
+
 문장 안의 단어를 버튼으로 바꾸면 전체 문장 문자열은 여러 DOM 노드로 나뉜다. UI 검사는 전체 텍스트 일치 대신 단어 재생 버튼의 접근 가능한 이름을 찾아야 한다.
