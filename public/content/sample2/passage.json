@@ -1,0 +1,279 @@
+{
+  "id": "sample2",
+  "title": "sample2",
+  "sentences": [
+    {
+      "id": 1,
+      "english": "Hello, everyone!",
+      "translation": "안녕하세요, 여러분!",
+      "pronunciation": "헬로, 에브리원!",
+      "audioSrc": "/content/sample2/audio/sentences/001.wav"
+    },
+    {
+      "id": 2,
+      "english": "My name is Junseo.",
+      "translation": "제 이름은 준서예요.",
+      "pronunciation": "마이 네임 이즈 준서",
+      "audioSrc": "/content/sample2/audio/sentences/002.wav"
+    },
+    {
+      "id": 3,
+      "english": "Today, I want to tell you about my trip to Seoul.",
+      "translation": "오늘 제 서울 여행에 대해 이야기해 드리고 싶어요.",
+      "pronunciation": "투데이, 아이 원트 투 텔 유 어바웃 마이 트립 투 서울.",
+      "audioSrc": "/content/sample2/audio/sentences/003.wav"
+    },
+    {
+      "id": 4,
+      "english": "I went to four special places.",
+      "translation": "저는 특별한 장소 네 곳에 갔어요.",
+      "pronunciation": "아이 웬트 투 포어 스페셜 플레이시즈",
+      "audioSrc": "/content/sample2/audio/sentences/004.wav"
+    },
+    {
+      "id": 5,
+      "english": "Let's go!",
+      "translation": "가자!",
+      "pronunciation": "렛츠 고!",
+      "audioSrc": "/content/sample2/audio/sentences/005.wav"
+    },
+    {
+      "id": 6,
+      "english": "First, I went to Seodaemun Prison.",
+      "translation": "먼저 저는 서대문형무소에 갔어요.",
+      "pronunciation": "퍼스트, 아이 웬트 투 서대문 프리즌.",
+      "audioSrc": "/content/sample2/audio/sentences/006.wav"
+    },
+    {
+      "id": 7,
+      "english": "It is a history museum now.",
+      "translation": "지금은 역사 박물관이에요.",
+      "pronunciation": "잇 이즈 어 히스토리 뮤지엄 나우",
+      "audioSrc": "/content/sample2/audio/sentences/007.wav"
+    },
+    {
+      "id": 8,
+      "english": "There are many old rooms and big watchtowers.",
+      "translation": "오래된 방들과 커다란 망루들이 많이 있습니다.",
+      "pronunciation": "데얼 알 매니 올드 룸즈 앤드 빅 워치타워즈",
+      "audioSrc": "/content/sample2/audio/sentences/008.wav"
+    },
+    {
+      "id": 9,
+      "english": "Many good people had to stay there. They could not leave.",
+      "translation": "많은 좋은 사람들이 거기에 머물러야 했습니다. 그들은 떠날 수 없었습니다.",
+      "pronunciation": "매니 굿 피플 해드 투 스테이 데어. 데이 쿠드 낫 리브.",
+      "audioSrc": "/content/sample2/audio/sentences/009.wav"
+    },
+    {
+      "id": 10,
+      "english": "I was surprised and sad.",
+      "translation": "놀랍고 슬펐어요.",
+      "pronunciation": "아이 워즈 서프라이즈드 앤 새드",
+      "audioSrc": "/content/sample2/audio/sentences/010.wav"
+    },
+    {
+      "id": 11,
+      "english": "I thought, \"Why did Japan do this?\" \"Why did this happen?\"",
+      "translation": "나는 '일본이 왜 이랬을까?', '왜 이런 일이 일어났을까?'라고 생각했다.",
+      "pronunciation": "아이 쏫, 와이 딛 저팬 두 디스? 와이 딛 디스 해픈?",
+      "audioSrc": "/content/sample2/audio/sentences/011.wav"
+    },
+    {
+      "id": 12,
+      "english": "Next, I went to King Gojong's Road.",
+      "translation": "다음으로 저는 고종의 길에 갔어요.",
+      "pronunciation": "넥스트, 아이 웬트 투 킹 고종스 로드.",
+      "audioSrc": "/content/sample2/audio/sentences/012.wav"
+    },
+    {
+      "id": 13,
+      "english": "King Gojong walked here a long time ago.",
+      "translation": "오래전에 고종 황제께서 이곳을 걸으셨습니다.",
+      "pronunciation": "킹 고종 웍트 히어 어 롱 타임 어고",
+      "audioSrc": "/content/sample2/audio/sentences/013.wav"
+    },
+    {
+      "id": 14,
+      "english": "He was afraid of Japan, so he went to a Russian building.",
+      "translation": "그는 일본이 두려워서 러시아 건물로 갔습니다.",
+      "pronunciation": "히 워즈 어프레이드 오브 재팬, 쏘 히 웬트 투 어 러시안 빌딩.",
+      "audioSrc": "/content/sample2/audio/sentences/014.wav"
+    },
+    {
+      "id": 15,
+      "english": "I didn't understand.",
+      "translation": "이해하지 못했어요.",
+      "pronunciation": "아이 디든트 언더스탠드",
+      "audioSrc": "/content/sample2/audio/sentences/015.wav"
+    },
+    {
+      "id": 16,
+      "english": "\"He was the king. Why did he leave his palace?\"",
+      "translation": "그는 왕이었어요. 왜 궁전을 떠났을까요?",
+      "pronunciation": "히 워즈 더 킹. 와이 디드 히 리브 히즈 팰리스?",
+      "audioSrc": "/content/sample2/audio/sentences/016.wav"
+    },
+    {
+      "id": 17,
+      "english": "There are many history signs along this road.",
+      "translation": "이 길을 따라 역사 안내판이 많이 있어요.",
+      "pronunciation": "데어 라 매니 히스토리 사인즈 얼롱 디스 로드",
+      "audioSrc": "/content/sample2/audio/sentences/017.wav"
+    },
+    {
+      "id": 18,
+      "english": "I learned a lot!",
+      "translation": "많이 배웠어요!",
+      "pronunciation": "아이 런드 어 랏!",
+      "audioSrc": "/content/sample2/audio/sentences/018.wav"
+    },
+    {
+      "id": 19,
+      "english": "I will never forget this road.",
+      "translation": "저는 이 길을 절대 잊지 않을 거예요.",
+      "pronunciation": "아이 윌 네버 포겟 디스 로드",
+      "audioSrc": "/content/sample2/audio/sentences/019.wav"
+    },
+    {
+      "id": 20,
+      "english": "Then, I went to Gyeonghuigung Palace.",
+      "translation": "그러고 나서 저는 경희궁에 갔어요.",
+      "pronunciation": "덴, 아이 웬 투 경희궁 팰리스.",
+      "audioSrc": "/content/sample2/audio/sentences/020.wav"
+    },
+    {
+      "id": 21,
+      "english": "It is quiet and beautiful.",
+      "translation": "조용하고 아름다워요.",
+      "pronunciation": "잇 이즈 콰이어트 앤드 뷰티풀",
+      "audioSrc": "/content/sample2/audio/sentences/021.wav"
+    },
+    {
+      "id": 22,
+      "english": "In front of the palace, there are many places for the king's officers.",
+      "translation": "궁궐 앞에는 왕의 신하들을 위한 자리가 많이 있습니다.",
+      "pronunciation": "인 프런트 오브 더 팰리스, 데얼 얼 매니 플레이시즈 포 더 킹스 오피서즈.",
+      "audioSrc": "/content/sample2/audio/sentences/022.wav"
+    },
+    {
+      "id": 23,
+      "english": "Inside, there is a special seat for the king, too.",
+      "translation": "안에는 왕을 위한 특별한 자리도 있어요.",
+      "pronunciation": "인사이드, 데얼 이즈 어 스페셜 시트 포 더 킹, 투.",
+      "audioSrc": "/content/sample2/audio/sentences/023.wav"
+    },
+    {
+      "id": 24,
+      "english": "The palace was much bigger before.",
+      "translation": "그 궁전은 예전에 훨씬 더 컸어요.",
+      "pronunciation": "더 팰리스 워즈 머치 비거 비포어",
+      "audioSrc": "/content/sample2/audio/sentences/024.wav"
+    },
+    {
+      "id": 25,
+      "english": "But a fire destroyed some parts. Other parts are gone, too.",
+      "translation": "하지만 화재로 일부가 소실되었습니다. 다른 부분들도 사라졌습니다.",
+      "pronunciation": "벗 어 파이어 디스트로이드 썸 파츠. 어더 파츠 아 곤, 투.",
+      "audioSrc": "/content/sample2/audio/sentences/025.wav"
+    },
+    {
+      "id": 26,
+      "english": "I feel sad.",
+      "translation": "슬퍼요.",
+      "pronunciation": "아이 필 새드",
+      "audioSrc": "/content/sample2/audio/sentences/026.wav"
+    },
+    {
+      "id": 27,
+      "english": "I want to see the palace as it was before.",
+      "translation": "예전 모습 그대로의 궁전을 보고 싶어요.",
+      "pronunciation": "아이 원 투 씨 더 팰리스 애즈 잇 워즈 비포어",
+      "audioSrc": "/content/sample2/audio/sentences/027.wav"
+    },
+    {
+      "id": 28,
+      "english": "Finally, I went to the Han River to watch a drone show!",
+      "translation": "드디어 드론 쇼를 보러 한강에 갔어요!",
+      "pronunciation": "파이널리, 아이 웬 투 더 한 리버 투 와치 어 드론 쇼!",
+      "audioSrc": "/content/sample2/audio/sentences/028.wav"
+    },
+    {
+      "id": 29,
+      "english": "It was my first drone show. It was amazing!",
+      "translation": "제 첫 드론 쇼였어요. 정말 멋졌어요!",
+      "pronunciation": "잇 워즈 마이 퍼스트 드론 쇼. 잇 워즈 어메이징!",
+      "audioSrc": "/content/sample2/audio/sentences/029.wav"
+    },
+    {
+      "id": 30,
+      "english": "There were many people.",
+      "translation": "사람들이 많았어요.",
+      "pronunciation": "데얼 월 매니 피플",
+      "audioSrc": "/content/sample2/audio/sentences/030.wav"
+    },
+    {
+      "id": 31,
+      "english": "The drones made pictures in the sky.",
+      "translation": "드론들이 하늘에 그림을 그렸어요.",
+      "pronunciation": "더 드론즈 메이드 픽처스 인 더 스카이",
+      "audioSrc": "/content/sample2/audio/sentences/031.wav"
+    },
+    {
+      "id": 32,
+      "english": "There was a story about pirates and treasure.",
+      "translation": "해적과 보물에 관한 이야기가 있었어요.",
+      "pronunciation": "데얼 워즈 어 스토리 어바웃 파이럿츠 앤 트레저",
+      "audioSrc": "/content/sample2/audio/sentences/032.wav"
+    },
+    {
+      "id": 33,
+      "english": "And guess what? The treasure was in Seoul!",
+      "translation": "그리고 그거 알아? 보물은 서울에 있었어!",
+      "pronunciation": "앤드 게스 왓? 더 트레저 워즈 인 소울!",
+      "audioSrc": "/content/sample2/audio/sentences/033.wav"
+    },
+    {
+      "id": 34,
+      "english": "It was a great show!",
+      "translation": "정말 멋진 공연이었어요!",
+      "pronunciation": "잇 워즈 어 그레이트 쇼!",
+      "audioSrc": "/content/sample2/audio/sentences/034.wav"
+    },
+    {
+      "id": 35,
+      "english": "These four places are my favorite places in Seoul.",
+      "translation": "이 네 곳은 제가 서울에서 가장 좋아하는 장소예요.",
+      "pronunciation": "디즈 포 플레이시즈 아 마이 페이버릿 플레이시즈 인 서울",
+      "audioSrc": "/content/sample2/audio/sentences/035.wav"
+    },
+    {
+      "id": 36,
+      "english": "I learned about history, saw beautiful places, and enjoyed a fun show.",
+      "translation": "역사에 대해 배우고, 아름다운 장소들을 보고, 재미있는 공연을 즐겼어요.",
+      "pronunciation": "아이 런드 어바웃 히스토리, 쏘 뷰티풀 플레이시즈, 앤 인조이드 어 펀 쇼.",
+      "audioSrc": "/content/sample2/audio/sentences/036.wav"
+    },
+    {
+      "id": 37,
+      "english": "I had a great time in Seoul!",
+      "translation": "서울에서 정말 즐거운 시간을 보냈어요!",
+      "pronunciation": "아이 해드 어 그레이트 타임 인 소울!",
+      "audioSrc": "/content/sample2/audio/sentences/037.wav"
+    },
+    {
+      "id": 38,
+      "english": "Next time, I want to visit more places.",
+      "translation": "다음에는 더 많은 곳을 방문하고 싶어요.",
+      "pronunciation": "넥스트 타임, 아이 원트 투 비짓 모어 플레이시스",
+      "audioSrc": "/content/sample2/audio/sentences/038.wav"
+    },
+    {
+      "id": 39,
+      "english": "Thank you for listening!",
+      "translation": "들어주셔서 감사합니다!",
+      "pronunciation": "땡큐 포 리스닝!",
+      "audioSrc": "/content/sample2/audio/sentences/039.wav"
+    }
+  ]
+}
